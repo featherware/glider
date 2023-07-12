@@ -1,1 +1,4 @@
 # glider
+
+# Dependencies
+ffmpeg
