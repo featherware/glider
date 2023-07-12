@@ -1,6 +1,7 @@
 <body name="body" pos="0 0 1" euler="90 0 0">
     <freejoint/>
     <!-- Main Wing -->
-    <geom name="main_wing" type="box" size="0.8 0.05 0.1" rgba="0.8 0.8 0.8 1" pos="0 0 0"/>
+    <geom name="main_wing" type="box" size="1.5 0.3 8" rgba="0.8 0.2 0.2 0.5" pos="0 0 0"/>
     <!-- Pilot -->
+    <geom name="pilot" type="box" size="1.8 0.3 0.6" rgba="0.2 0.2 0.8 0.5" pos="0 0 -0.3"/>
 </body>
