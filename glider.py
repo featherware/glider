@@ -4,9 +4,12 @@ import numpy as np
 
 
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
-PILOT_DENSITY_KG = 68 / reduce(lambda x,y: x*y, PILOT_DIMENSIONS_M)
+PILOT_DENSITY_KG = 68 / reduce(lambda x, y: x * y, PILOT_DIMENSIONS_M)
 
-PILOT_XML = f"""<geom name="pilot" type="box" size="{" ".join([ str(dim) for dim in PILOT_DIMENSIONS_M ])}" rgba="0.2 0.2 0.8 0.5" pos="0 0 -0.3"/>"""
+
+def pilot_xml():
+    return f"""<geom name="pilot" type="box" size="{" ".join([ str(dim) for dim in PILOT_DIMENSIONS_M ])}" rgba="0.2 0.2 0.8 0.5" pos="0 0 -0.3"/>"""
+
 
 def wing_coords(wing_span_m=20, sweep_back_deg=20, wing_chord_m=3) -> tuple:
 
@@ -19,13 +22,13 @@ def wing_coords(wing_span_m=20, sweep_back_deg=20, wing_chord_m=3) -> tuple:
     wing_tip_left = np.array([
         wing_tip_trail_m,
         0,
-        -wing_span_m/2
+        -wing_span_m / 2
     ])
 
     wing_tip_right = np.array([
         wing_tip_trail_m,
         0,
-        wing_span_m/2
+        wing_span_m / 2
     ])
 
     trailing_point = np.array([
@@ -55,9 +58,10 @@ def glider(pitch_angle: int = 20) -> str:
     <!-- Main Wing -->
     {wing()}
     <!-- Pilot -->
-    {PILOT_XML}
+    {pilot_xml()}
 </body>
 """
+
 
 def to_vertex_list(points: list) -> str:
     str_points = []
@@ -66,3 +70,5 @@ def to_vertex_list(points: list) -> str:
         str_points.append(" ".join(list(point)))
     return " ".join(str_points)
 
+if __name__ == "__main__":
+    print(pilot_xml())
