@@ -3,6 +3,8 @@ from typing import Callable
 
 import numpy as np
 
+from .wing import box_wing_xml
+
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -13,10 +15,6 @@ WING_RGBA = "0.8 0.2 0.2 0.5"
 
 def pilot_xml():
     return f"""<geom name="pilot" type="box" size="{" ".join([ str(dim) for dim in PILOT_DIMENSIONS_M ])}" rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
-
-
-def box_wing_xml(size: list = [15, 0.3, 30], density=23) -> str:
-    return f"""<geom name="main_wing" type="box" size="{" ".join([str(dim) for dim in size])}" density="{density}" rgba="{WING_RGBA}" pos="0 0 0"/>"""
 
 
 def glider_xml(
