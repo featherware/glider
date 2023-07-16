@@ -3,7 +3,7 @@ from typing import Callable
 
 import numpy as np
 
-from .wing import box_wing_xml
+import wing
 
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
@@ -18,17 +18,17 @@ def pilot_xml():
 
 
 def glider_xml(
-        wing_fcn: Callable = box_wing_xml,
-        pilot_fcn: Callable = pilot_xml,
+        wing_fn: Callable = wing.box_wing_xml,
+        pilot_fn: Callable = pilot_xml,
         pitch_angle: int = 20
         ) -> str:
     return f"""
 <body name="body" pos="0 0 1" euler="90 0 {pitch_angle}">
     <freejoint/>
     <!-- Main Wing -->
-    {wing_fcn()}
+    {wing_fn()}
     <!-- Pilot -->
-    {pilot_fcn()}
+    {pilot_fn()}
 </body>
 """
 
@@ -37,7 +37,8 @@ def to_vertex_list(points: list) -> str:
     str_points = []
 
     for point in points:
-        str_points.append(" ".join(list(point)))
+        str_points.append(
+            " ".join([str(coord) for coord in list(point)]))
     return " ".join(str_points)
 
 
