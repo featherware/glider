@@ -17,10 +17,10 @@ def to_vertex_list(points: list) -> str:
 
 
 def delta_wing_coords(
-        wing_span_m=20,
-        wing_chord_m=3,
-        wing_tip_trail_m=15,
-        thickness=5
+        wing_span_m=6,
+        wing_chord_m=2,
+        wing_tip_trail_m=4,
+        thickness=0.5
         ) -> np.ndarray:
 
     # Leading point is at (0, 0, 0)
