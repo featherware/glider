@@ -1,7 +1,7 @@
 import mujoco
 import mediapy as media
 
-def render_to_collision(model, data, framerate=60, show=True):
+def render_to_collision(model, data, framerate=60, show=True) -> dict:
     renderer = mujoco.Renderer(model)
     frames = []
     mujoco.mj_resetData(model, data)  # Reset state and time.

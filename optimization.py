@@ -2,20 +2,19 @@ import mujoco
 import mediapy as media
 
 import constants
+import wing
+from simulation import drop_test_glider
 
 def glider_forwards_distance(data) -> float:
     return abs(data.geom("main_wing").xpos[0])
 
 
 def measure_forwards_fitness(
-        model,
-        data
+        glider: str | None,
         ) -> float:
     
-    xml = glider.drop_test_glider(
-        glider.glider_xml(
-            wing_fn=wing.mesh_geom
-        ),
+    xml = drop_test_glider(
+        glider,
         assets=[wing.delta_wing_asset()],
         height=500
     )
