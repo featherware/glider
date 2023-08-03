@@ -56,20 +56,6 @@ def delta_wing_asset(vertices=None) -> str:
     return asset
 
 
-def asset_from_stl(filename: str, name: str = "delta-wing"):
-    mesh = trimesh.load(
-        filename,
-        file_type="stl",
-    )
-    vertices = mesh.vertices
-    asset = f"""
-    <asset>
-        <mesh name="{name}-mesh" vertex="{to_vertex_list(vertices)}"/>
-    </asset>"""
-
-    return asset
-
-
 def load_stl_from_file(filename: str):
     # Load the STL file and wrap it into a mesh object.
 

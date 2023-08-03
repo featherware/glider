@@ -1,7 +1,11 @@
 import constants
 
+from .glider import create_glider_xml
 
-def wrap_glider(glider_xml: str, wind: str = '0 0 0') -> str:
+
+def wrap_glider(glider_xml: str, wind: str = "0 0 0") -> str:
+    if not glider_xml:
+        glider_xml, glider_asset = create_glider_xml()
     world_xml = f"""
 <mujoco>
     <option density="{constants.AIR_DENSITY}" viscosity="{constants.AIR_VISCOSITY}" wind="{wind}"/>
@@ -17,7 +21,11 @@ def wrap_glider(glider_xml: str, wind: str = '0 0 0') -> str:
     return world_xml
 
 
-def drop_test_glider(glider_xml: str, assets: list = list(), height=80, wind: str = '0 0 0') -> str:
+def drop_test_glider(
+    glider_xml: str, glider_asset: str, height=80, wind: str = "0 0 0"
+) -> str:
+    if not glider_xml:
+        glider_xml, glider_asset = create_glider_xml()
     world_xml = f"""
 <mujoco>
     <option density="{constants.AIR_DENSITY}" viscosity="{constants.AIR_VISCOSITY}" wind="{wind}"/>
@@ -31,9 +39,8 @@ def drop_test_glider(glider_xml: str, assets: list = list(), height=80, wind: st
         </body>
     </worldbody>
 
-    {'/n'.join(assets) if assets else ''}
+    {glider_asset}
 </mujoco>
 
 """
-    print(world_xml)
     return world_xml
