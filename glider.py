@@ -1,10 +1,6 @@
 from functools import reduce
-from typing import Callable
-
-import numpy as np
 
 import wing
-
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -18,17 +14,14 @@ def pilot_xml():
 
 
 def glider_xml(
-        wing_fn: Callable = wing.box_wing_xml,
-        pilot_fn: Callable = pilot_xml,
+        mesh_name: str = "stl-wing", 
         pitch_angle: int = 20
         ) -> str:
     return f"""
 <body name="body" pos="0 0 1" euler="90 0 {pitch_angle}">
     <freejoint/>
     <!-- Main Wing -->
-    {wing_fn()}
-    <!-- Pilot -->
-    {pilot_fn()}
+    {wing.mesh_geom(name=mesh_name)}
 </body>
 """
 
@@ -37,8 +30,7 @@ def to_vertex_list(points: list) -> str:
     str_points = []
 
     for point in points:
-        str_points.append(
-            " ".join([str(coord) for coord in list(point)]))
+        str_points.append(" ".join([str(coord) for coord in list(point)]))
     return " ".join(str_points)
 
 
