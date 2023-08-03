@@ -36,10 +36,10 @@ def asset_from_stl(filename: str, mesh_name: str = "stl-wing-mesh"):
 def create_glider_xml(
     filename: str = DEFAULT_STL_FILEPATH,
     geom_name: str = "stl-wing",
-    pitch_angle: int = 20,
+    orientation: list[int] = [90, 0, 20],
 ) -> tuple[str, str]:
     body = f"""
-<body name="body" pos="0 0 1" euler="90 0 {pitch_angle}">
+<body name="body" pos="0 0 1" euler="{' '.join(list(map(str, orientation)))}">
     <freejoint/>
     <!-- Main Wing -->
     {wing.mesh_geom(name=geom_name)}
