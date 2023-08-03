@@ -12,7 +12,7 @@ def test_glider():
 
     world_xml = drop_test_glider(glider_xml, glider_asset)
 
-    model = mujoco.MjModel.from_xml(world_xml)
+    model = mujoco.MjModel.from_xml_string(world_xml)
     data = mujoco.MjData(model)
 
     frames = visualize.render_to_collision(model, data, show=False)
