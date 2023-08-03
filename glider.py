@@ -16,10 +16,11 @@ def pilot_xml():
 
 
 def asset_from_stl(filename: str, name: str = "delta-wing"):
-    mesh = trimesh.load(
-        filename,
-        file_type="stl",
-    )
+    with open(filename, "rb") as f:
+        mesh = trimesh.load(
+            f,
+            file_type="stl",
+        )
     vertices = mesh.vertices
     asset = f"""
     <asset>
@@ -40,7 +41,7 @@ def create_glider_xml(
 </body>
 """
 
-    asset = asset_from_stl("glider/assets/wing.stl", name=mesh_name + "-mesh")
+    asset = asset_from_stl("assets/delta_plane.stl", name=mesh_name + "-mesh")
     return body, asset
 
 
@@ -50,7 +51,3 @@ def to_vertex_list(points: list) -> str:
     for point in points:
         str_points.append(" ".join([str(coord) for coord in list(point)]))
     return " ".join(str_points)
-
-
-if __name__ == "__main__":
-    print(glider_xml())

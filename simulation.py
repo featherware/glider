@@ -1,6 +1,5 @@
 import constants
-
-from .glider import create_glider_xml
+from glider import create_glider_xml
 
 
 def wrap_glider(glider_xml: str, wind: str = "0 0 0") -> str:

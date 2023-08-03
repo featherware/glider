@@ -2,3 +2,4 @@ numpy
 mediapy
 mujoco
 pandas
+trimesh
