@@ -2,7 +2,6 @@ from functools import reduce
 
 import trimesh
 
-import wing
 from constants import DEFAULT_STL_FILEPATH
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
@@ -16,6 +15,11 @@ def pilot_xml():
     return f"""<geom name="pilot" type="box" size="{" ".join(
         [ str(dim) for dim in PILOT_DIMENSIONS_M ])
         }" rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
+
+
+def mesh_geom(name: str = "delta-wing") -> str:
+    geom = f"""<geom name="{name}" type="mesh" mesh="{name}-mesh"/>"""
+    return geom
 
 
 def asset_from_stl(filename: str, mesh_name: str = "stl-wing-mesh"):
@@ -42,7 +46,7 @@ def create_glider_xml(
 <body name="body" pos="0 0 1" euler="{' '.join(list(map(str, orientation)))}">
     <freejoint/>
     <!-- Main Wing -->
-    {wing.mesh_geom(name=geom_name)}
+    {mesh_geom(name=geom_name)}
 </body>
 """
 
