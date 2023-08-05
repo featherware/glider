@@ -24,13 +24,20 @@ def geom_xml(geom_name: str, mesh_name: str) -> str:
     return geom
 
 
-def asset_from_stl(filename: str, mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh"):
+def asset_from_stl(
+    filename: str,
+    mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh",
+    scale: float = 1.0,
+):
     with open(filename, "rb") as f:
         mesh = trimesh.load(
             f,
             file_type="stl",
         )
     vertices = mesh.vertices
+    if scale != 1.0:
+        vertices = [point * scale for point in vertices]
+
     asset = f"""
     <asset>
         <mesh name="{mesh_name}" vertex="{to_vertex_list(vertices)}"/>
@@ -43,6 +50,7 @@ def create_glider_xml(
     filename: str = DEFAULT_STL_FILEPATH,
     geom_name: str = GLIDER_GEOM_NAME,
     orientation: list[int] = [90, 0, 20],
+    scale: float = 1.0,
 ) -> tuple[str, str]:
     body = f"""
 <body name="body" pos="0 0 1" euler="{' '.join(list(map(str, orientation)))}">
@@ -57,16 +65,19 @@ def create_glider_xml(
 </body>
 """
 
-    asset = asset_from_stl(filename=filename, mesh_name=(geom_name + "-mesh"))
+    asset = asset_from_stl(
+        filename=filename,
+        mesh_name=(geom_name + "-mesh"),
+        scale=scale,
+    )
     return body, asset
 
 
 def to_vertex_list(
     points: list,
-    scale: float = 8.0,
 ) -> str:
     str_points = []
 
     for point in points:
-        str_points.append(" ".join([str(coord * scale) for coord in list(point)]))
+        str_points.append(" ".join([str(coord) for coord in list(point)]))
     return " ".join(str_points)
