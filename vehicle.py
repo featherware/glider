@@ -2,7 +2,7 @@ from functools import reduce
 
 import trimesh
 
-from constants import DEFAULT_STL_FILEPATH
+from constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -17,12 +17,14 @@ def pilot_xml():
         }" rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
 
 
-def mesh_geom(name: str = "delta-wing") -> str:
-    geom = f"""<geom name="{name}" type="mesh" mesh="{name}-mesh"/>"""
+def geom_xml(geom_name: str, mesh_name: str) -> str:
+    geom = (
+        f"""<geom name="{geom_name}"  density="40" type="mesh" mesh="{mesh_name}"/>"""
+    )
     return geom
 
 
-def asset_from_stl(filename: str, mesh_name: str = "stl-wing-mesh"):
+def asset_from_stl(filename: str, mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh"):
     with open(filename, "rb") as f:
         mesh = trimesh.load(
             f,
@@ -39,14 +41,19 @@ def asset_from_stl(filename: str, mesh_name: str = "stl-wing-mesh"):
 
 def create_glider_xml(
     filename: str = DEFAULT_STL_FILEPATH,
-    geom_name: str = "stl-wing",
+    geom_name: str = GLIDER_GEOM_NAME,
     orientation: list[int] = [90, 0, 20],
 ) -> tuple[str, str]:
     body = f"""
 <body name="body" pos="0 0 1" euler="{' '.join(list(map(str, orientation)))}">
     <freejoint/>
     <!-- Main Wing -->
-    {mesh_geom(name=geom_name)}
+    {geom_xml(
+        geom_name=geom_name,
+        mesh_name=geom_name + '-mesh'
+    )}
+    <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
+    <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
 </body>
 """
 
@@ -54,9 +61,12 @@ def create_glider_xml(
     return body, asset
 
 
-def to_vertex_list(points: list) -> str:
+def to_vertex_list(
+    points: list,
+    scale: float = 8.0,
+) -> str:
     str_points = []
 
     for point in points:
-        str_points.append(" ".join([str(coord) for coord in list(point)]))
+        str_points.append(" ".join([str(coord * scale) for coord in list(point)]))
     return " ".join(str_points)
