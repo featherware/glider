@@ -6,7 +6,7 @@ from constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
-PILOT_DENSITY_KG = 68 / reduce(lambda x, y: x * y, PILOT_DIMENSIONS_M)
+PILOT_MASS_KG = 68
 
 WING_RGBA = "0.8 0.2 0.2 0.5"
 
@@ -14,17 +14,16 @@ WING_RGBA = "0.8 0.2 0.2 0.5"
 def pilot_xml():
     return f"""<geom name="pilot" type="box" size="{" ".join(
         [ str(dim) for dim in PILOT_DIMENSIONS_M ])
-        }" rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
+        }" mass="{PILOT_MASS_KG} rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
 
 
 def geom_xml(
-        geom_name: str,
-        mesh_name: str,
-        density: float = 40,
-        ) -> str:
-    geom = (
-        f"""<geom name="{geom_name}"  density="{density}" type="mesh" mesh="{mesh_name}"/>"""
-    )
+    geom_name: str,
+    mesh_name: str,
+    density: float = 40,
+    rgba: str = WING_RGBA,
+) -> str:
+    geom = f"""<geom name="{geom_name}"  density="{density}" type="mesh" mesh="{mesh_name}"/>"""
     return geom
 
 
@@ -64,6 +63,8 @@ def create_glider_xml(
         geom_name=geom_name,
         mesh_name=geom_name + '-mesh'
     )}
+    <!-- Pilot -->
+    {pilot_xml()}
     <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
     <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
 </body>
