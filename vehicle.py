@@ -17,9 +17,13 @@ def pilot_xml():
         }" rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
 
 
-def geom_xml(geom_name: str, mesh_name: str) -> str:
+def geom_xml(
+        geom_name: str,
+        mesh_name: str,
+        density: float = 40,
+        ) -> str:
     geom = (
-        f"""<geom name="{geom_name}"  density="40" type="mesh" mesh="{mesh_name}"/>"""
+        f"""<geom name="{geom_name}"  density="{density}" type="mesh" mesh="{mesh_name}"/>"""
     )
     return geom
 
