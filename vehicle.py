@@ -14,7 +14,7 @@ WING_RGBA = "0.8 0.2 0.2 0.5"
 def pilot_xml():
     return f"""<geom name="pilot" type="box" size="{" ".join(
         [ str(dim) for dim in PILOT_DIMENSIONS_M ])
-        }" mass="{PILOT_MASS_KG} rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
+        }" mass="{PILOT_MASS_KG}" rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
 
 
 def geom_xml(
@@ -23,7 +23,7 @@ def geom_xml(
     density: float = 40,
     rgba: str = WING_RGBA,
 ) -> str:
-    geom = f"""<geom name="{geom_name}"  density="{density}" type="mesh" mesh="{mesh_name}"/>"""
+    geom = f"""<geom name="{geom_name}"  density="{density}" rgba="{rgba}" type="mesh" mesh="{mesh_name}"/>"""
     return geom
 
 
