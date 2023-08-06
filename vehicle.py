@@ -1,5 +1,3 @@
-from functools import reduce
-
 import trimesh
 
 from constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
@@ -9,6 +7,96 @@ PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
 PILOT_MASS_KG = 68
 
 WING_RGBA = "0.8 0.2 0.2 0.5"
+
+
+class Vehicle:
+    """
+    A vehicle comprises a set of vertices for the main wing,
+    and a human-sized pilot.
+
+    Orientation is relative to the file default orientation.
+
+    Either vertices or filename must be provided.
+
+    Args:
+        vertices (list): A list of vertices for the main wing
+        filename (str): The path to an STL file
+        orientation (list): The orientation of the vehicle
+    """
+
+    def __init__(
+        self,
+        vertices: list | None = None,
+        filename: str | None = None,
+        orientation: list[int] = [0, 0, 0],
+        wing_density: float = 5,
+    ):
+        if filename:
+            self.vertices = self.load_stl(filename)
+        elif vertices:
+            self.vertices = vertices
+        else:
+            raise ValueError("Must provide either vertices or filename")
+
+    def load_stl(
+        self,
+        filename: str,
+        mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh",
+        scale: float = 1.0,
+    ):
+        with open(filename, "rb") as f:
+            mesh = trimesh.load(
+                f,
+                file_type="stl",
+            )
+        vertices = mesh.vertices
+        if scale != 1.0:
+            vertices = [point * scale for point in vertices]
+
+        return vertices
+
+    def asset_from_vertices(
+        self,
+        vertices: list,
+        mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh",
+        scale: float = 1.0,
+    ):
+        return f"""
+        <asset>
+            <mesh name="{mesh_name}" vertex="{to_vertex_list(vertices)}"/>
+        </asset>"""
+
+    def create_glider_from_vertices(
+        self,
+        geom_name: str = GLIDER_GEOM_NAME,
+        vertices: list | None = None,
+        orientation: list[float] = [0, 0, 0],
+        scale: float = 1.0,
+    ) -> tuple[str, str]:
+        if not vertices:
+            vertices = self.vertices
+
+        body = f"""
+    <body name="body" pos="0 0 1" euler="{' '.join(list(map(str, orientation)))}">
+        <freejoint/>
+        <!-- Main Wing -->
+        {geom_xml(
+            geom_name=geom_name,
+            mesh_name=geom_name + '-mesh'
+        )}
+        <!-- Pilot -->
+        {pilot_xml()}
+        <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
+        <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
+    </body>
+    """
+
+        asset = self.asset_from_vertices(
+            vertices=vertices,
+            mesh_name=(geom_name + "-mesh"),
+            scale=scale,
+        )
+        return body, asset
 
 
 def pilot_xml():
