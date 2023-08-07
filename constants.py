@@ -20,4 +20,5 @@ DEFAULT_STL_FILEPATH = "assets/delta_plane.stl"
 FRAMERATE = 60
 
 # Genetic Algorithm defaults
-MUTATION_CHANCE = 0.1
+MUTATION_CHANCE = 1.0
+MUTATION_RATIO = 0.15

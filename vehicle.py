@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import trimesh
 
-from constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
+from constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_CHANCE, MUTATION_RATIO
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -46,6 +46,20 @@ class Vehicle(nn.Module):
         self.vertices_parameter = nn.Parameter(
             torch.tensor(self.vertices, dtype=torch.float32)
         )
+
+    def mutate(self) -> None:
+        new_vertices = []
+        for vertex in self.vertices:
+            if np.random.random() < MUTATION_CHANCE:
+                new_vertex: list[float] = []
+                for dim in vertex:
+                    if dim == 0:
+                        dim += 0.1  # TODO make this better?
+                    else:
+                        dim *= (np.random.normal() * MUTATION_RATIO) + 1
+                    new_vertex.append(dim)
+            new_vertices.append(new_vertex)
+        self.vertices = new_vertices
 
     def load_stl(
         self,
