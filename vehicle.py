@@ -1,3 +1,6 @@
+import numpy as np
+import torch
+import torch.nn as nn
 import trimesh
 
 from constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
@@ -9,7 +12,7 @@ PILOT_MASS_KG = 68
 WING_RGBA = "0.8 0.2 0.2 0.5"
 
 
-class Vehicle:
+class Vehicle(nn.Module):
     """
     A vehicle comprises a set of vertices for the main wing,
     and a human-sized pilot.
@@ -31,12 +34,18 @@ class Vehicle:
         orientation: list[int] = [0, 0, 0],
         wing_density: float = 5,
     ):
+        super(Vehicle, self).__init__()
+
         if filename:
             self.vertices = self.load_stl(filename)
         elif vertices:
             self.vertices = vertices
         else:
             raise ValueError("Must provide either vertices or filename")
+
+        self.vertices_parameter = nn.Parameter(
+            torch.tensor(self.vertices, dtype=torch.float32)
+        )
 
     def load_stl(
         self,
