@@ -3,7 +3,8 @@ import torch
 import torch.nn as nn
 import trimesh
 
-from constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_CHANCE, MUTATION_RATIO
+from constants import (DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_CHANCE,
+                       MUTATION_RATIO)
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -92,13 +93,9 @@ class Vehicle(nn.Module):
     def create_glider_from_vertices(
         self,
         geom_name: str = GLIDER_GEOM_NAME,
-        vertices: list | None = None,
         orientation: list[float] = [0, 0, 0],
         scale: float = 1.0,
     ) -> tuple[str, str]:
-        if not vertices:
-            vertices = self.vertices
-
         body = f"""
     <body name="body" pos="0 0 1" euler="{' '.join(list(map(str, orientation)))}">
         <freejoint/>
@@ -115,7 +112,7 @@ class Vehicle(nn.Module):
     """
 
         asset = self.asset_from_vertices(
-            vertices=vertices,
+            vertices=self.vertices,
             mesh_name=(geom_name + "-mesh"),
             scale=scale,
         )
@@ -163,7 +160,7 @@ def asset_from_stl(
 def create_glider_xml(
     filename: str = DEFAULT_STL_FILEPATH,
     geom_name: str = GLIDER_GEOM_NAME,
-    orientation: list[int] = [90, 0, 20],
+    orientation: list[int] = [200, 200, 100],
     scale: float = 1.0,
 ) -> tuple[str, str]:
     body = f"""

@@ -33,6 +33,10 @@ def drop_test_glider(
 ) -> str:
     if not glider_xml or not glider_asset:
         glider_xml, glider_asset = create_glider_xml(orientation=orientation)
+
+    assert glider_xml
+    assert glider_asset
+
     world_xml = f"""
 <mujoco>
     <option density="{constants.AIR_DENSITY}" viscosity="{constants.AIR_VISCOSITY}" wind="{wind}"/>

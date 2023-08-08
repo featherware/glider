@@ -4,7 +4,7 @@ import pandas as pd
 from constants import DEFAULT_STL_FILEPATH
 from observability import glider_abs_x_position
 from simulation import drop_test_glider
-from vehicle import create_glider_xml
+from vehicle import Vehicle, create_glider_xml
 
 
 def find_best_orientation(
@@ -42,19 +42,17 @@ def find_best_orientation(
 
 
 def measure_drop_test(
-    stl_filename: str = DEFAULT_STL_FILEPATH,
+    glider_xml: str,
+    glider_asset: str,
     scale: float = 1.0,
     orientation: list[int] = [200, 200, 100],
-    height=80,
-    wind: str = "0 0 0",
+    **kwargs,
 ) -> float:
-    glider_xml, glider_asset = create_glider_xml(
-        filename=stl_filename, orientation=orientation, scale=scale
+    world_xml = drop_test_glider(
+        glider_xml=glider_xml,
+        glider_asset=glider_asset,
+        **kwargs,
     )
-    assert glider_xml
-    assert glider_asset
-
-    world_xml = drop_test_glider(glider_xml, glider_asset)
 
     model = mujoco.MjModel.from_xml_string(world_xml)
     data = mujoco.MjData(model)

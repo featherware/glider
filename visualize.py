@@ -6,9 +6,10 @@ import numpy as np
 
 
 def render_initial_pixels(
-    model,
-    data,
+    xml: str,
 ) -> np.ndarray:
+    model = mujoco.MjModel.from_xml_string(xml)
+    data = mujoco.MjData(model)
     renderer = mujoco.Renderer(model)
 
     mujoco.mj_step(model, data)
