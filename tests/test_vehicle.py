@@ -2,7 +2,6 @@ import mujoco
 import pytest
 
 import visualize
-from constants import DEFAULT_STL_FILEPATH
 from simulation import drop_test_glider
 from vehicle import Vehicle, create_glider_xml
 
@@ -32,6 +31,13 @@ def test_initialize():
     for point in vehicle_3.vertices:
         assert len(point) == 3
         assert point not in vehicle_2.vertices
+
+
+def test_max_dim():
+    vehicle = Vehicle(num_vertices=8, max_dim_m=1.5)
+    for point in vehicle.vertices:
+        for dim in point:
+            assert dim <= 1.5
 
 
 def test_glider():
