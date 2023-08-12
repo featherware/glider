@@ -34,19 +34,29 @@ class Vehicle(nn.Module):
         filename: str | None = None,
         orientation: list[int] = [0, 0, 0],
         wing_density: float = 5,
+        num_vertices: int = 30,
+        max_dim_m: float = 4.5,
     ):
         super(Vehicle, self).__init__()
 
-        if filename:
+        if filename is not None:
             self.vertices = self.load_stl(filename)
-        elif vertices:
+        elif vertices is not None:
             self.vertices = vertices
         else:
-            raise ValueError("Must provide either vertices or filename")
+            self.initialize_vertices(num_vertices, max_dim_m)
 
         self.vertices_parameter = nn.Parameter(
             torch.tensor(self.vertices, dtype=torch.float32)
         )
+
+    def initialize_vertices(self, num_points: int, max_dim_m: float) -> None:
+        self.vertices = []
+        for _ in range(num_points):
+            vertex = []
+            for _ in range(3):
+                vertex.append(np.random.random() * max_dim_m)
+            self.vertices.append(vertex)
 
     def mutate(self) -> None:
         new_vertices = []

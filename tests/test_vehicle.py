@@ -3,8 +3,8 @@ import pytest
 
 import visualize
 from constants import DEFAULT_STL_FILEPATH
-from vehicle import Vehicle, create_glider_xml
 from simulation import drop_test_glider
+from vehicle import Vehicle, create_glider_xml
 
 
 @pytest.fixture
@@ -18,7 +18,21 @@ def vertices():
         [1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, 0.0, 0.0],
-        ]
+    ]
+
+
+def test_initialize():
+    vehicle = Vehicle(num_vertices=8)
+    assert len(vehicle.vertices) == 8
+
+    vehicle_2 = Vehicle(num_vertices=10)
+    assert len(vehicle_2.vertices) == 10
+
+    vehicle_3 = Vehicle(num_vertices=10)
+    for point in vehicle_3.vertices:
+        assert len(point) == 3
+        assert point not in vehicle_2.vertices
+
 
 def test_glider():
     glider_xml, glider_asset = create_glider_xml()
