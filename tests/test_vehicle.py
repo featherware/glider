@@ -1,4 +1,5 @@
 import mujoco
+import numpy as np
 import pytest
 
 import visualize
@@ -58,15 +59,17 @@ def test_glider():
 
 
 def test_mutate(vertices):
-    vehicle = Vehicle(vertices=vertices)
-    v1 = vehicle.vertices
-    vehicle.mutate()
-    v2 = vehicle.vertices
+    vehicle1 = Vehicle(vertices=vertices)
+    new_vertices = vehicle1.mutate()
 
-    assert len(v1) == len(v2)
+    assert len(new_vertices) == len(vehicle1.vertices)
 
-    for vertex in v2:
-        assert vertex not in vertices
+    # All vertices should be different
+    for vertex in new_vertices:
+        assert vertex not in vehicle1.vertices
+
+    vehicle2 = Vehicle(vertices=new_vertices)
+    assert vehicle2
 
 
 def test_clone():

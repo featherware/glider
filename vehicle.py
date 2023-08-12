@@ -60,9 +60,10 @@ class Vehicle:
                 vertex.append(np.random.random() * max_dim_m)
             self.vertices.append(vertex)
 
-    def mutate(self) -> None:
+    def mutate(self) -> list[list[float]]:
         new_vertices = []
         new_vertex = []
+
         for vertex in self.vertices:
             if np.random.random() < MUTATION_CHANCE:
                 new_vertex: list[float] = list()  # type: ignore
@@ -73,7 +74,8 @@ class Vehicle:
                         dim *= (np.random.normal() * MUTATION_RATIO) + 1
                     new_vertex.append(dim)
             new_vertices.append(new_vertex)
-        self.vertices = new_vertices
+
+        return new_vertices
 
     def clone(self) -> Any:
         return Vehicle(vertices=self.vertices)
