@@ -23,3 +23,7 @@ TIME_STEP = 0.02
 # Genetic Algorithm defaults
 MUTATION_CHANCE = 1.0
 MUTATION_RATIO = 0.15
+
+# Rendering constants
+FRAME_WIDTH = 320
+FRAME_HEIGHT = 240

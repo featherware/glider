@@ -1,15 +1,14 @@
-from typing import Any
-
 import mediapy as media
 import mujoco
 import numpy as np
 
+import simulation
+
 
 def render_initial_pixels(
-    xml: str,
+    model,
+    data,
 ) -> np.ndarray:
-    model = mujoco.MjModel.from_xml_string(xml)
-    data = mujoco.MjData(model)
     renderer = mujoco.Renderer(model)
 
     mujoco.mj_step(model, data)
@@ -17,6 +16,15 @@ def render_initial_pixels(
     renderer.update_scene(data)
     pixels = renderer.render()
     return pixels
+
+
+def view_vehicle(glider_xml, glider_asset):
+    world_xml = simulation.wrap_glider(glider_xml, glider_asset)
+
+    model = mujoco.MjModel.from_xml_string(world_xml)
+    data = mujoco.MjData(model)
+
+    return render_initial_pixels(model, data)
 
 
 def render_to_collision(model, data, framerate=60, show=True) -> list[np.ndarray]:
