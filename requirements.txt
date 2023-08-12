@@ -2,6 +2,9 @@ numpy
 mediapy
 mujoco
 pandas
+<<<<<<< Updated upstream
 trimesh
 jupyter
 torch
+=======
+>>>>>>> Stashed changes

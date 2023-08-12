@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -13,7 +15,7 @@ PILOT_MASS_KG = 68
 WING_RGBA = "0.8 0.2 0.2 0.5"
 
 
-class Vehicle(nn.Module):
+class Vehicle:
     """
     A vehicle comprises a set of vertices for the main wing,
     and a human-sized pilot.
@@ -60,9 +62,10 @@ class Vehicle(nn.Module):
 
     def mutate(self) -> None:
         new_vertices = []
+        new_vertex = []
         for vertex in self.vertices:
             if np.random.random() < MUTATION_CHANCE:
-                new_vertex: list[float] = []
+                new_vertex: list[float] = list()  # type: ignore
                 for dim in vertex:
                     if dim == 0:
                         dim += 0.1  # TODO make this better?
@@ -71,6 +74,9 @@ class Vehicle(nn.Module):
                     new_vertex.append(dim)
             new_vertices.append(new_vertex)
         self.vertices = new_vertices
+
+    def clone(self) -> Any:
+        return Vehicle(vertices=self.vertices)
 
     def load_stl(
         self,

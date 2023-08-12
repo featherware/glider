@@ -20,9 +20,14 @@ DEFAULT_STL_FILEPATH = "assets/delta_plane.stl"
 FRAMERATE = 60
 TIME_STEP = 0.02
 
-# Genetic Algorithm defaults
-MUTATION_CHANCE = 1.0
+# Reproduction constants
 MUTATION_RATIO = 0.15
+MUTATION_CHANCE = 0.15
+
+# Reproduction weighting
+MUTATION_WEIGHT = 3
+CLONE_WEIGHT = 2
+CROSSOVER_WEIGHT = 1
 
 # Rendering constants
 FRAME_WIDTH = 320

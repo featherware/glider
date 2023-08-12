@@ -67,3 +67,11 @@ def test_mutate(vertices):
 
     for vertex in v2:
         assert vertex not in vertices
+
+
+def test_clone():
+    vehicle1 = Vehicle(num_vertices=8)
+    vehicle2 = vehicle1.clone()
+
+    assert vehicle1.vertices == vehicle2.vertices
+    assert id(vehicle1) != id(vehicle2)
