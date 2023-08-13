@@ -1,6 +1,6 @@
-import visualize
-from constants import FRAME_HEIGHT, FRAME_WIDTH
-from vehicle import Vehicle
+from glider import visualize
+from glider.constants import FRAME_HEIGHT, FRAME_WIDTH
+from glider.vehicle import Vehicle
 
 
 def test_view_vehicle():

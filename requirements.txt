@@ -1,6 +1,0 @@
-numpy
-mediapy
-mujoco
-pandas
-trimesh
-jupyter

@@ -1,9 +1,9 @@
 import mujoco
 import pytest
 
-import visualize
-from simulation import drop_test_glider
-from vehicle import Vehicle, create_glider_xml
+from glider import visualize
+from glider.simulation import drop_test_glider
+from glider.vehicle import Vehicle, create_glider_xml
 
 
 @pytest.fixture
