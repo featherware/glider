@@ -21,7 +21,7 @@ FRAMERATE = 60
 TIME_STEP = 0.02
 
 # Reproduction constants
-MUTATION_RATIO = 0.15
+MUTATION_RATIO = 0.05
 MUTATION_CHANCE = 0.15
 
 # Reproduction weighting

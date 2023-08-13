@@ -41,6 +41,8 @@ class Vehicle:
     ):
         super(Vehicle, self).__init__()
 
+        self.max_dim_m = max_dim_m
+
         if filename is not None:
             self.vertices = self.load_stl(filename)
         elif vertices is not None:
@@ -65,14 +67,10 @@ class Vehicle:
         new_vertex = []
 
         for vertex in self.vertices:
-            if np.random.random() < MUTATION_CHANCE:
-                new_vertex: list[float] = list()  # type: ignore
-                for dim in vertex:
-                    if dim == 0:
-                        dim += 0.1  # TODO make this better?
-                    else:
-                        dim *= (np.random.normal() * MUTATION_RATIO) + 1
-                    new_vertex.append(dim)
+            new_vertex: list[float] = list()  # type: ignore
+            for dim in vertex:
+                dim += self.max_dim_m * MUTATION_RATIO * np.random.choice((-1, 1))
+                new_vertex.append(dim)
             new_vertices.append(new_vertex)
 
         return new_vertices
