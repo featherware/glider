@@ -5,8 +5,7 @@ import torch
 import torch.nn as nn
 import trimesh
 
-from constants import (DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_CHANCE,
-                       MUTATION_RATIO)
+from constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_RATIO
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -77,6 +76,10 @@ class Vehicle:
 
     def clone(self) -> Any:
         return Vehicle(vertices=self.vertices)
+
+    def cross_over(self, other_vehicle: Any) -> Any:
+        split_point = np.random.randint(1, len(self.vertices) - 1)
+        return self.vertices[:split_point] + other_vehicle.vertices[split_point:]
 
     def load_stl(
         self,

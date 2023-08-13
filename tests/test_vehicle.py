@@ -1,5 +1,4 @@
 import mujoco
-import numpy as np
 import pytest
 
 import visualize
@@ -78,3 +77,14 @@ def test_clone():
 
     assert vehicle1.vertices == vehicle2.vertices
     assert id(vehicle1) != id(vehicle2)
+
+
+def test_cross_over():
+    vehicle1 = Vehicle(num_vertices=8)
+    vehicle2 = Vehicle(num_vertices=8)
+
+    new_vertices = vehicle1.cross_over(vehicle2)
+
+    assert new_vertices != vehicle1.vertices
+    assert new_vertices != vehicle2.vertices
+    assert len(new_vertices) == len(vehicle1.vertices)
