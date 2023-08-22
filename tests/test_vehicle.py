@@ -2,7 +2,7 @@ import mujoco
 import pytest
 
 from glider import visualize
-from glider.simulation import drop_test_glider
+from glider.simulation import drop_test_xml
 from glider.vehicle import Vehicle, create_glider_xml
 
 
@@ -45,7 +45,7 @@ def test_glider():
     assert glider_xml
     assert glider_asset
 
-    world_xml = drop_test_glider(glider_xml, glider_asset)
+    world_xml = drop_test_xml(glider_xml, glider_asset)
 
     model = mujoco.MjModel.from_xml_string(world_xml)
     data = mujoco.MjData(model)
