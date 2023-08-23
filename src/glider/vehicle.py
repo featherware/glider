@@ -1,13 +1,12 @@
 from typing import Any
 
+import mediapy as media
 import numpy as np
 import torch
 import torch.nn as nn
 import trimesh
-import mediapy as media
 
 from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_RATIO
-import visualize
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -138,13 +137,9 @@ class Vehicle:
             scale=scale,
         )
         return body, asset
-    
+
     def show(self):
-        media.show_image(
-            visualize.view_vehicle(
-                *self.create_glider_from_vertices()
-            )
-        )
+        media.show_image(visualize.view_vehicle(*self.create_glider_from_vertices()))
 
 
 def pilot_xml():

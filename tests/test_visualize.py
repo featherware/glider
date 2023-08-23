@@ -1,4 +1,4 @@
-from glider import visualize
+import glider.visualize as visualize
 from glider.constants import FRAME_HEIGHT, FRAME_WIDTH
 from glider.vehicle import Vehicle
 

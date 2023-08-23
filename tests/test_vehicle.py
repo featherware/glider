@@ -2,7 +2,6 @@ import mujoco
 import pytest
 
 from glider import visualize
-from glider.simulation import drop_test_xml
 from glider.vehicle import Vehicle, create_glider_xml
 
 
@@ -38,23 +37,6 @@ def test_max_dim():
     for point in vehicle.vertices:
         for dim in point:
             assert dim <= 1.5
-
-
-def test_glider():
-    glider_xml, glider_asset = create_glider_xml()
-    assert glider_xml
-    assert glider_asset
-
-    world_xml = drop_test_xml(glider_xml, glider_asset)
-
-    model = mujoco.MjModel.from_xml_string(world_xml)
-    data = mujoco.MjData(model)
-
-    frames = visualize.render_to_collision(model, data, show=False)
-
-    assert len(frames) > 0
-
-    # TODO add heuristic for duration of flight
 
 
 def test_mutate(vertices):

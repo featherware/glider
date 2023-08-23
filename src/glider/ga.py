@@ -34,9 +34,9 @@
 
 # # Creating an instance of the GA class inside the ga module. Some parameters are initialized within the constructor.
 # ga_instance = pygad.GA(num_generations=num_generations,
-#                        num_parents_mating=num_parents_mating, 
+#                        num_parents_mating=num_parents_mating,
 #                        fitness_func=fitness_function,
-#                        sol_per_pop=sol_per_pop, 
+#                        sol_per_pop=sol_per_pop,
 #                        num_genes=num_genes,
 #                        on_generation=callback_generation)
 
