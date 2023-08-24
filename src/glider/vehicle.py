@@ -7,6 +7,7 @@ import torch.nn as nn
 import trimesh
 
 from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_RATIO
+import glider.visualize as visualize
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]

@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 
 from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
-from .observability import glider_abs_x_position
 from .simulation import drop_test_glider
 from .vehicle import Vehicle, create_glider_xml
 
@@ -38,6 +37,7 @@ def iterate_population(
     population: list[list[list[float]]] | None = None,
     population_size=100,
     survival_weight=0.3,
+    cloning_weight=0.4,
 ):
     # on_start()
 
@@ -48,6 +48,9 @@ def iterate_population(
     # on_generation()
 
     # on_stop()
+
+    assert cloning_weight + survival_weight <= 1.0
+
     if not population:
         population = [
             [create_point(GLIDER_MAX_DIM) for _ in range(NUM_GENES)]
@@ -65,14 +68,27 @@ def iterate_population(
     ranking = list(zip(population, results))
     ranking.sort(key=lambda x: x[1], reverse=True)
 
-    print(ranking)
-
     # Retain survivors
     survivor_results = ranking[: int(population_size * survival_weight)]
 
     survivors = [result[0] for result in survivor_results]
 
-    return survivors
+    clones = []
+
+    for i in range(int(population_size * cloning_weight)):
+        clones.append(
+            Vehicle(vertices=survivors[i % len(survivors)]).mutate()
+        )
+
+    population = [ Vehicle(
+        num_vertices=NUM_GENES,
+        max_dim_m=GLIDER_MAX_DIM).vertices
+        for _ in range(population_size - len(clones) - len(survivors))
+    ]
+
+    population += clones + survivors
+
+    return population
 
     total_weight = mutation_weight + cloning_weight + crossover_weight
     mutation_weight /= total_weight
