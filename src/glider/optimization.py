@@ -2,7 +2,7 @@ import mujoco
 import numpy as np
 import pandas as pd
 
-from .constants import DEFAULT_STL_FILEPATH
+from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
 from .observability import glider_abs_x_position
 from .simulation import drop_test_glider
 from .vehicle import Vehicle, create_glider_xml
@@ -32,7 +32,7 @@ def fitness_func(genes: list[list[float]]) -> float:
     while len(data.contact) < 1:  # Render until landing
         mujoco.mj_step(model, data)
 
-    return glider_abs_x_position(data)
+    return abs(data.geom(GLIDER_GEOM_NAME).xpos[0])
 
 
 def iterate_population(
