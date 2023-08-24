@@ -16,7 +16,6 @@ def create_point(max_dim_m: float) -> list[float]:
 
 
 def fitness_func(genes: list[list[float]]) -> float:
-
     test_vehicle = Vehicle(vertices=genes)
 
     glider_xml, glider_asset = test_vehicle.create_glider_from_vertices()
@@ -51,8 +50,8 @@ def iterate_population(
     # on_stop()
     if not population:
         population = [
-                [create_point(GLIDER_MAX_DIM) for _ in range(NUM_GENES)]
-                for _ in range(population_size)
+            [create_point(GLIDER_MAX_DIM) for _ in range(NUM_GENES)]
+            for _ in range(population_size)
         ]
 
     results: list[float] = []
@@ -74,8 +73,6 @@ def iterate_population(
     survivors = [result[0] for result in survivor_results]
 
     return survivors
-
-
 
     total_weight = mutation_weight + cloning_weight + crossover_weight
     mutation_weight /= total_weight
@@ -102,4 +99,3 @@ def iterate_population(
         new_population.append(vehicle.Vehicle(num_vertices=30, max_dim_m=5.0))
 
     return new_population
-
