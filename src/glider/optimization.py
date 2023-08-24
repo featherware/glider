@@ -8,39 +8,74 @@ from .simulation import drop_test_glider
 from .vehicle import Vehicle, create_glider_xml
 
 NUM_GENES = 30
+GLIDER_MAX_DIM = 5.0
 
 
 def create_point(max_dim_m: float) -> list[float]:
     return list(np.random.random() * max_dim_m for _ in range(3))
 
 
+def fitness_func(genes: list[list[float]]) -> float:
+
+    test_vehicle = Vehicle(vertices=genes)
+
+    glider_xml, glider_asset = test_vehicle.create_glider_from_vertices()
+    world_xml = drop_test_glider(
+        glider_xml=glider_xml,
+        glider_asset=glider_asset,
+    )
+
+    model = mujoco.MjModel.from_xml_string(world_xml)
+    data = mujoco.MjData(model)
+    mujoco.mj_resetData(model, data)  # Reset state and time.
+
+    while len(data.contact) < 1:  # Render until landing
+        mujoco.mj_step(model, data)
+
+    return glider_abs_x_position(data)
+
+
 def iterate_population(
-    population,
+    population: list[list[list[float]]] | None = None,
     population_size=100,
     survival_weight=0.3,
 ):
-    if len(population) < population_size:
-        # Initiate a new population
-        population = population + [
-            Vehicle(num_vertices=30, max_dim_m=5.0)
-            for _ in range(population_size - len(population))
+    # on_start()
+
+    # on_fitness()
+    # on_parents()
+    # on_crossover()
+    # on_mutation()
+    # on_generation()
+
+    # on_stop()
+    if not population:
+        population = [
+                [create_point(GLIDER_MAX_DIM) for _ in range(NUM_GENES)]
+                for _ in range(population_size)
         ]
 
-    results: dict[Vehicle, float] = {}
+    results: list[float] = []
 
-    for test_vehicle in population:
-        result = measure_drop_test(*test_vehicle.create_glider_from_vertices())
-        results[test_vehicle] = result
+    for genes in population:
+        results.append(fitness_func(genes))
 
-    # Sort by highest fitness
-    sorted_results = sorted(list(results.items()), key=lambda x: x[1], reverse=True)
+    assert len(population) == len(results)
+
+    # zip together
+    ranking = list(zip(population, results))
+    ranking.sort(key=lambda x: x[1], reverse=True)
+
+    print(ranking)
 
     # Retain survivors
-    survivor_results = sorted_results[: int(population_size * survival_weight)]
+    survivor_results = ranking[: int(population_size * survival_weight)]
 
     survivors = [result[0] for result in survivor_results]
 
     return survivors
+
+
 
     total_weight = mutation_weight + cloning_weight + crossover_weight
     mutation_weight /= total_weight
@@ -68,25 +103,3 @@ def iterate_population(
 
     return new_population
 
-
-def measure_drop_test(
-    glider_xml: str,
-    glider_asset: str,
-    scale: float = 1.0,
-    orientation: list[int] = [200, 200, 100],
-    **kwargs,
-) -> float:
-    world_xml = drop_test_glider(
-        glider_xml=glider_xml,
-        glider_asset=glider_asset,
-        **kwargs,
-    )
-
-    model = mujoco.MjModel.from_xml_string(world_xml)
-    data = mujoco.MjData(model)
-    mujoco.mj_resetData(model, data)  # Reset state and time.
-
-    while len(data.contact) < 1:  # Render until landing
-        mujoco.mj_step(model, data)
-
-    return glider_abs_x_position(data)
