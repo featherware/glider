@@ -2,7 +2,28 @@ import mediapy as media
 import mujoco
 import numpy as np
 
-from .simulation import wrap_glider
+from .constants import AIR_DENSITY, AIR_VISCOSITY
+
+
+def wrap_glider(
+    glider_xml: str, glider_asset: str, wind: str = "0 0 0"
+) -> str:
+
+    world_xml = f"""
+<mujoco>
+    <option density="{AIR_DENSITY}" viscosity="{AIR_VISCOSITY}" wind="{wind}"/>
+    <worldbody>
+        <light name="top" pos="0 0 5"/>
+        <!-- Body -->
+        {glider_xml}
+    </worldbody>
+
+    {glider_asset}
+</mujoco>
+
+"""
+
+    return world_xml
 
 
 def render_initial_pixels(

@@ -14,6 +14,7 @@ PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
 PILOT_MASS_KG = 68
 
 WING_RGBA = "0.8 0.2 0.2 0.5"
+WING_DENSITY = 1.67  # Roughly the same as a paraglider
 
 
 class Vehicle:
@@ -28,15 +29,13 @@ class Vehicle:
     Args:
         vertices (list): A list of vertices for the main wing
         filename (str): The path to an STL file
-        orientation (list): The orientation of the vehicle
     """
 
     def __init__(
         self,
         vertices: list | None = None,
         filename: str | None = None,
-        orientation: list[int] = [0, 0, 0],
-        wing_density: float = 5,
+        wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
         max_dim_m: float = 4.5,
     ):
@@ -54,6 +53,8 @@ class Vehicle:
         self.vertices_parameter = nn.Parameter(
             torch.tensor(self.vertices, dtype=torch.float32)
         )
+
+        self.wing_density = wing_density
 
     def initialize_vertices(self, num_points: int, max_dim_m: float) -> None:
         self.vertices = []
@@ -114,19 +115,16 @@ class Vehicle:
     def create_glider_from_vertices(
         self,
         geom_name: str = GLIDER_GEOM_NAME,
-        orientation: list[float] = [0, 0, 0],
         scale: float = 1.0,
     ) -> tuple[str, str]:
         body = f"""
-    <body name="body" pos="0 0 1" euler="{' '.join(list(map(str, orientation)))}">
+    <body name="body" pos="0 0 1" euler="0 0 0">
         <freejoint/>
         <!-- Main Wing -->
         {geom_xml(
             geom_name=geom_name,
             mesh_name=geom_name + '-mesh'
         )}
-        <!-- Pilot -->
-        {pilot_xml()}
         <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
         <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
     </body>
@@ -143,16 +141,10 @@ class Vehicle:
         media.show_image(visualize.view_vehicle(*self.create_glider_from_vertices()))
 
 
-def pilot_xml():
-    return f"""<geom name="pilot" type="box" size="{" ".join(
-        [ str(dim) for dim in PILOT_DIMENSIONS_M ])
-        }" mass="{PILOT_MASS_KG}" rgba="{PILOT_RGBA}" pos="0 0 -0.3"/>"""
-
-
 def geom_xml(
     geom_name: str,
     mesh_name: str,
-    density: float = 40,
+    density: float = WING_DENSITY,
     rgba: str = WING_RGBA,
 ) -> str:
     geom = f"""<geom name="{geom_name}"  density="{density}" rgba="{rgba}" type="mesh" mesh="{mesh_name}"/>"""
@@ -184,11 +176,10 @@ def asset_from_stl(
 def create_glider_xml(
     filename: str = DEFAULT_STL_FILEPATH,
     geom_name: str = GLIDER_GEOM_NAME,
-    orientation: list[int] = [200, 200, 100],
     scale: float = 1.0,
 ) -> tuple[str, str]:
     body = f"""
-<body name="body" pos="0 0 1" euler="{' '.join(list(map(str, orientation)))}">
+<body name="body" pos="0 0 1" euler="0 0 0">
     <freejoint/>
     <!-- Main Wing -->
     {geom_xml(

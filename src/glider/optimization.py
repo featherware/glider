@@ -6,7 +6,7 @@ from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
 from .simulation import drop_test_glider
 from .vehicle import Vehicle, create_glider_xml
 
-NUM_GENES = 30
+NUM_GENES = 12
 GLIDER_MAX_DIM = 5.0
 
 
@@ -21,6 +21,7 @@ def fitness_func(genes: list[list[float]]) -> float:
     world_xml = drop_test_glider(
         glider_xml=glider_xml,
         glider_asset=glider_asset,
+        height=50.0
     )
 
     model = mujoco.MjModel.from_xml_string(world_xml)
@@ -86,7 +87,7 @@ def iterate_population(
         for _ in range(population_size - len(clones) - len(survivors))
     ]
 
-    population += clones + survivors
+    population = survivors + clones + population
 
     return population
 
