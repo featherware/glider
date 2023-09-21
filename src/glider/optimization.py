@@ -65,7 +65,7 @@ def iterate_population(
 
     assert len(population) == len(results)
 
-    # zip together
+    # Ranking is a combination of glider and fitness
     ranking = list(zip(population, results))
     ranking.sort(key=lambda x: x[1], reverse=True)
 
@@ -81,7 +81,7 @@ def iterate_population(
             Vehicle(vertices=survivors[i % len(survivors)]).mutate()
         )
 
-    population = [ Vehicle(
+    population = [Vehicle(
         num_vertices=NUM_GENES,
         max_dim_m=GLIDER_MAX_DIM).vertices
         for _ in range(population_size - len(clones) - len(survivors))

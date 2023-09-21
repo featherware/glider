@@ -13,7 +13,10 @@ def wrap_glider(
 <mujoco>
     <option density="{AIR_DENSITY}" viscosity="{AIR_VISCOSITY}" wind="{wind}"/>
     <worldbody>
-        <light name="top" pos="0 0 5"/>
+        <light name="sideN" pos="0 1 10"/>
+        <light name="sideE" pos="1 0 10"/>
+        <light name="sideS" pos="0 -1 10"/>
+        <light name="sideW" pos="-1 0 10"/>
         <!-- Body -->
         {glider_xml}
     </worldbody>
