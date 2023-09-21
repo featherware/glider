@@ -1,4 +1,5 @@
 from typing import Any
+import json
 
 import mediapy as media
 import numpy as np
@@ -108,13 +109,20 @@ class Vehicle:
     def asset_from_vertices(
         self,
         vertices: list,
+        faces: list = [],
         mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh",
         scale: float = 1.0,
     ):
-        return f"""
-        <asset>
-            <mesh name="{mesh_name}" vertex="{to_vertex_list(vertices)}"/>
-        </asset>"""
+        if faces:
+            return f"""
+            <asset>
+                <mesh name="{mesh_name}" vertex="{to_vertex_list(vertices)}" face="{to_vertex_list(faces)}"/>
+            </asset>"""
+        else:
+            return f"""
+            <asset>
+                <mesh name="{mesh_name}" vertex="{to_vertex_list(vertices)}"/>
+            </asset>"""
 
     def create_glider_from_vertices(
         self,
@@ -136,6 +144,7 @@ class Vehicle:
 
         asset = self.asset_from_vertices(
             vertices=self.vertices,
+            faces=self.faces,
             mesh_name=(geom_name + "-mesh"),
             scale=scale,
         )

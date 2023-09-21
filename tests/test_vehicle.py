@@ -6,7 +6,7 @@ from glider.vehicle import Vehicle, create_glider_xml
 
 
 @pytest.fixture
-def vertices():
+def cube_vertices():
     return [
         [1.0, 1.0, 1.0],
         [0.0, 1.0, 1.0],
@@ -20,7 +20,7 @@ def vertices():
 
 
 @pytest.fixture
-def faces():
+def cube_faces():
     return [
         [0, 1, 6, 3],
         [7, 4, 2, 5],
@@ -28,6 +28,29 @@ def faces():
         [7, 3, 0, 5],
         [2, 5, 0, 1],
         [2, 3, 6, 4],
+    ]
+
+def concave_prism_vertices():
+    return [
+        [0.0, 0.0, 0.0],  # inner base point
+        [1.0, -1.0, 1.0],  # base
+        [1.0, -1.0, -1.0],  # base
+        [-1.0, -1.0, -1.0],  # base
+        [-1.0, -1.0, 1.0],  # base
+        [0.0, 1.0, 0.0],  # pyramid tip
+    ]
+
+
+def concave_prism_faces():
+    return [
+        [1, 2, 0],
+        [2, 3, 0],
+        [3, 4, 0],
+        [4, 1, 0],
+        [1, 2, 5],
+        [2, 3, 5],
+        [3, 4, 5],
+        [4, 1, 5],
     ]
 
 
@@ -44,12 +67,12 @@ def test_initialize():
         assert point not in vehicle_2.vertices
 
 
-def test_faces(vertices, faces):
+def test_faces(cube_vertices, cube_faces):
     vehicle = Vehicle(num_vertices=8)
     assert vehicle.faces is not None
 
-    vehicle_2 = Vehicle(vertices=vertices, faces=faces)
-    assert vehicle_2.faces == faces
+    vehicle_2 = Vehicle(vertices=cube_vertices, faces=cube_faces)
+    assert vehicle_2.faces == cube_faces
 
     # TODO Test that this is a cube
 
@@ -63,8 +86,8 @@ def test_max_dim():
             assert dim <= 1.5
 
 
-def test_mutate(vertices):
-    vehicle1 = Vehicle(vertices=vertices)
+def test_mutate(cube_vertices):
+    vehicle1 = Vehicle(vertices=cube_vertices)
     new_vertices = vehicle1.mutate()
 
     assert len(new_vertices) == len(vehicle1.vertices)
