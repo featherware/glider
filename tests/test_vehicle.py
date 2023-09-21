@@ -19,6 +19,18 @@ def vertices():
     ]
 
 
+@pytest.fixture
+def faces():
+    return [
+        [0, 1, 6, 3],
+        [7, 4, 2, 5],
+        [7, 4, 1, 6],
+        [7, 3, 0, 5],
+        [2, 5, 0, 1],
+        [2, 3, 6, 4],
+    ]
+
+
 def test_initialize():
     vehicle = Vehicle(num_vertices=8)
     assert len(vehicle.vertices) == 8
@@ -30,6 +42,18 @@ def test_initialize():
     for point in vehicle_3.vertices:
         assert len(point) == 3
         assert point not in vehicle_2.vertices
+
+
+def test_faces(vertices, faces):
+    vehicle = Vehicle(num_vertices=8)
+    assert vehicle.faces is not None
+
+    vehicle_2 = Vehicle(vertices=vertices, faces=faces)
+    assert vehicle_2.faces == faces
+
+    # TODO Test that this is a cube
+
+    # TODO test that this works for non-convex groups
 
 
 def test_max_dim():

@@ -6,8 +6,9 @@ import torch
 import torch.nn as nn
 import trimesh
 
-from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_RATIO
 import glider.visualize as visualize
+
+from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_RATIO
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -34,6 +35,7 @@ class Vehicle:
     def __init__(
         self,
         vertices: list | None = None,
+        faces: list | None = None,
         filename: str | None = None,
         wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
@@ -42,6 +44,8 @@ class Vehicle:
         super(Vehicle, self).__init__()
 
         self.max_dim_m = max_dim_m
+
+        self.faces = faces if faces else []
 
         if filename is not None:
             self.vertices = self.load_stl(filename)
