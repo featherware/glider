@@ -14,8 +14,11 @@ def create_point(max_dim_m: float) -> list[float]:
     return list(np.random.random() * max_dim_m for _ in range(3))
 
 
-def fitness_func(genes: list[list[float]]) -> float:
-    test_vehicle = Vehicle(vertices=genes)
+def fitness_func(genes: list[list[float]] | Vehicle) -> float:
+    if type(genes) == list:
+        test_vehicle = Vehicle(vertices=genes)
+    else:
+        test_vehicle = genes
 
     glider_xml, glider_asset = test_vehicle.create_glider_from_vertices()
     world_xml = drop_test_glider(
@@ -35,8 +38,7 @@ def fitness_func(genes: list[list[float]]) -> float:
 
 
 def iterate_population(
-    population: list[list[list[float]]] | None = None,
-    population_size=100,
+    population: list[Vehicle],
     survival_weight=0.3,
     cloning_weight=0.4,
 ):
@@ -50,13 +52,9 @@ def iterate_population(
 
     # on_stop()
 
-    assert cloning_weight + survival_weight <= 1.0
+    population_size = len(population)
 
-    if not population:
-        population = [
-            [create_point(GLIDER_MAX_DIM) for _ in range(NUM_GENES)]
-            for _ in range(population_size)
-        ]
+    assert cloning_weight + survival_weight <= 1.0
 
     results: list[float] = []
 
@@ -72,18 +70,23 @@ def iterate_population(
     # Retain survivors
     survivor_results = ranking[: int(population_size * survival_weight)]
 
-    survivors = [result[0] for result in survivor_results]
+    survivors: list[Vehicle] = [result[0] for result in survivor_results]
 
-    clones = []
+    clones: list[Vehicle] = []
 
     for i in range(int(population_size * cloning_weight)):
+        target_index = i % len(survivors)
+
         clones.append(
-            Vehicle(vertices=survivors[i % len(survivors)]).mutate()
+            Vehicle(
+                vertices=(survivors[target_index].mutate()))
         )
 
-    population = [Vehicle(
-        num_vertices=NUM_GENES,
-        max_dim_m=GLIDER_MAX_DIM).vertices
+    population = [
+        Vehicle(
+            num_vertices=NUM_GENES,
+            max_dim_m=GLIDER_MAX_DIM
+        )
         for _ in range(population_size - len(clones) - len(survivors))
     ]
 

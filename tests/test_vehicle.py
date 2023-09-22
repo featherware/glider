@@ -30,6 +30,7 @@ def cube_faces():
         [2, 3, 6, 4],
     ]
 
+
 def concave_prism_vertices():
     return [
         [0.0, 0.0, 0.0],  # inner base point
@@ -47,10 +48,10 @@ def concave_prism_faces():
         [2, 3, 0],
         [3, 4, 0],
         [4, 1, 0],
-        [1, 2, 5],
-        [2, 3, 5],
-        [3, 4, 5],
-        [4, 1, 5],
+        [2, 1, 5],
+        [3, 2, 5],
+        [4, 3, 5],
+        [1, 4, 5],
     ]
 
 
