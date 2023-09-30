@@ -156,6 +156,15 @@ class Vehicle:
     def show(self):
         media.show_image(visualize.view_vehicle(*self.create_glider_from_vertices()))
 
+    def exceeds_max_dim(self) -> bool:
+        try:
+            for vertex in self.vertices:
+                for second_vertex in self.vertices:
+                    norm = np.linalg.norm(np.array(vertex) - np.array(second_vertex))
+                    assert norm <= self.max_dim_m
+            return False
+        except:
+            return True
 
 def geom_xml(
     geom_name: str,

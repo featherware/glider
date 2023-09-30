@@ -87,6 +87,16 @@ def test_max_dim():
             assert dim <= 1.5
 
 
+def test_exceeds_max_dim(cube_vertices):
+    vehicle = Vehicle(vertices=cube_vertices, max_dim_m=1.0)
+    assert vehicle.exceeds_max_dim() is True
+
+    half_cube = [[a/2, b/2, c/2] for a, b, c in cube_vertices]
+
+    vehicle_2 = Vehicle(vertices=half_cube, max_dim_m=1.0)
+    assert vehicle_2.exceeds_max_dim() is False
+
+
 def test_mutate(cube_vertices):
     vehicle1 = Vehicle(vertices=cube_vertices)
     new_vertices = vehicle1.mutate()
