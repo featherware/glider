@@ -41,6 +41,7 @@ class Vehicle:
         wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
         max_dim_m: float = 4.5,
+        orientation: list[int] = [0, 0, 0],
     ):
         super(Vehicle, self).__init__()
 
@@ -54,6 +55,8 @@ class Vehicle:
             self.vertices = vertices
         else:
             self.initialize_vertices(num_vertices, max_dim_m)
+
+        self.orientation = orientation
 
         self.vertices_parameter = nn.Parameter(
             torch.tensor(self.vertices, dtype=torch.float32)
@@ -130,7 +133,7 @@ class Vehicle:
         scale: float = 1.0,
     ) -> tuple[str, str]:
         body = f"""
-    <body name="body" pos="0 0 1" euler="0 0 0">
+    <body name="body" pos="0 0 1" euler="{' '.join(map(str, self.orientation))}">
         <freejoint/>
         <!-- Main Wing -->
         {geom_xml(
