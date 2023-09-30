@@ -110,6 +110,10 @@ def test_mutate(cube_vertices):
     vehicle2 = Vehicle(vertices=new_vertices)
     assert vehicle2
 
+    for _ in range(100):
+        vehicle2 = Vehicle(vertices=vehicle2.mutate())
+        assert not vehicle2.exceeds_max_dim()
+
 
 def test_clone():
     vehicle1 = Vehicle(num_vertices=8)

@@ -9,7 +9,12 @@ import trimesh
 
 import glider.visualize as visualize
 
-from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME, MUTATION_RATIO
+from .constants import (
+    DEFAULT_STL_FILEPATH,
+    GLIDER_GEOM_NAME,
+    MUTATION_RATIO,
+    MUTATION_CHANCE
+)
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
@@ -73,17 +78,25 @@ class Vehicle:
             self.vertices.append(vertex)
 
     def mutate(self) -> list[list[float]]:
-        new_vertices = []
-        new_vertex = []
+        retries = 10
 
-        for vertex in self.vertices:
-            new_vertex: list[float] = list()  # type: ignore
-            for dim in vertex:
-                dim += self.max_dim_m * MUTATION_RATIO * np.random.choice((-1, 1))
-                new_vertex.append(dim)
-            new_vertices.append(new_vertex)
+        for _ in range(retries):
+            new_vertices = []
+            new_vertex = []
 
-        return new_vertices
+            for vertex in self.vertices:
+                new_vertex: list[float] = list()  # type: ignore
+                for dim in vertex:
+                    dim += self.max_dim_m * MUTATION_RATIO * np.random.choice((-1, 1))
+                    new_vertex.append(dim)
+                new_vertices.append(new_vertex)
+
+            if not Vehicle(new_vertices).exceeds_max_dim():
+                return new_vertices
+            else:
+                continue
+
+        return self.vertices
 
     def clone(self) -> Any:
         return Vehicle(vertices=self.vertices)
