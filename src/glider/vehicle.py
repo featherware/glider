@@ -87,7 +87,8 @@ class Vehicle:
             for vertex in self.vertices:
                 new_vertex: list[float] = list()  # type: ignore
                 for dim in vertex:
-                    dim += self.max_dim_m * MUTATION_RATIO * np.random.choice((-1, 1))
+                    if np.random.random() < MUTATION_CHANCE:
+                        dim += self.max_dim_m * MUTATION_RATIO * np.random.choice((-1, 1))
                     new_vertex.append(dim)
                 new_vertices.append(new_vertex)
 
@@ -176,8 +177,9 @@ class Vehicle:
                     norm = np.linalg.norm(np.array(vertex) - np.array(second_vertex))
                     assert norm <= self.max_dim_m
             return False
-        except:
+        except AssertionError:
             return True
+
 
 def geom_xml(
     geom_name: str,
