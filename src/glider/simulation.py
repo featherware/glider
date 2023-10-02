@@ -1,5 +1,4 @@
 from .constants import AIR_DENSITY, AIR_VISCOSITY
-from .vehicle import create_glider_xml
 
 
 def drop_test_glider(

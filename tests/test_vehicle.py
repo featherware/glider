@@ -2,7 +2,7 @@ import mujoco
 import pytest
 
 from glider import visualize
-from glider.vehicle import Vehicle, create_glider_xml
+from glider.vehicle import Vehicle
 
 
 @pytest.fixture

@@ -2,9 +2,8 @@ import mujoco
 import numpy as np
 import pandas as pd
 
-from .constants import DEFAULT_STL_FILEPATH, GLIDER_GEOM_NAME
 from .simulation import drop_test_glider
-from .vehicle import Vehicle, create_glider_xml
+from .vehicle import Vehicle
 
 NUM_GENES = 12
 GLIDER_MAX_DIM = 5.0
@@ -34,7 +33,7 @@ def fitness_func(genes: list[list[float]] | Vehicle) -> float:
     while len(data.contact) < 1:  # Render until landing
         mujoco.mj_step(model, data)
 
-    return abs(data.geom(GLIDER_GEOM_NAME).xpos[0])
+    return abs(data.geom('vehicle-wing').xpos[0])
 
 
 def iterate_population(

@@ -12,10 +12,6 @@ PILOT_DENSITY_KG = 68 / reduce(lambda x, y: x * y, PILOT_DIMENSIONS_M)
 # Delta wing defaults
 WING_RGBA = "0.8 0.2 0.2 0.5"
 
-# Glider defaults
-GLIDER_GEOM_NAME = "stl-wing"
-DEFAULT_STL_FILEPATH = "assets/delta_plane.stl"
-
 # Simulation
 FRAMERATE = 60
 TIME_STEP = 0.02

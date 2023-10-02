@@ -1,17 +1,11 @@
-import json
 from typing import Any
 
 import mediapy as media
 import numpy as np
-import torch
-import torch.nn as nn
 import trimesh
 
 import glider.visualize as visualize
-
 from .constants import (
-    DEFAULT_STL_FILEPATH,
-    GLIDER_GEOM_NAME,
     MUTATION_RATIO,
     MUTATION_CHANCE
 )
@@ -22,6 +16,8 @@ PILOT_MASS_KG = 68
 
 WING_RGBA = "0.8 0.2 0.2 0.5"
 WING_DENSITY = 1.67  # Roughly the same as a paraglider
+
+GEOM_XML = f"""<geom name="{'vehicle-wing'}"  density="{WING_DENSITY}" rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>"""
 
 
 class Vehicle:
@@ -42,7 +38,6 @@ class Vehicle:
         self,
         vertices: list | None = None,
         faces: list | None = None,
-        filename: str | None = None,
         wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
         max_dim_m: float = 4.5,
@@ -51,23 +46,14 @@ class Vehicle:
         super(Vehicle, self).__init__()
 
         self.max_dim_m = max_dim_m
-
+        self.orientation = orientation
+        self.wing_density = wing_density
         self.faces = faces if faces else []
 
-        if filename is not None:
-            self.vertices = self.load_stl(filename)
-        elif vertices is not None:
+        if vertices is not None:
             self.vertices = vertices
         else:
             self.initialize_vertices(num_vertices, max_dim_m)
-
-        self.orientation = orientation
-
-        self.vertices_parameter = nn.Parameter(
-            torch.tensor(self.vertices, dtype=torch.float32)
-        )
-
-        self.wing_density = wing_density
 
     def initialize_vertices(self, num_points: int, max_dim_m: float) -> None:
         self.vertices = []
@@ -109,7 +95,6 @@ class Vehicle:
     def load_stl(
         self,
         filename: str,
-        mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh",
         scale: float = 1.0,
     ):
         with open(filename, "rb") as f:
@@ -127,33 +112,28 @@ class Vehicle:
         self,
         vertices: list,
         faces: list = [],
-        mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh",
         scale: float = 1.0,
     ):
         if faces:
             return f"""
             <asset>
-                <mesh name="{mesh_name}" vertex="{to_vertex_list(vertices)}" face="{to_vertex_list(faces)}"/>
+                <mesh name="{'vehicle-wing-mesh'}" vertex="{to_vertex_list(vertices)}" face="{to_vertex_list(faces)}"/>
             </asset>"""
         else:
             return f"""
             <asset>
-                <mesh name="{mesh_name}" vertex="{to_vertex_list(vertices)}"/>
+                <mesh name="{'vehicle-wing-mesh'}" vertex="{to_vertex_list(vertices)}"/>
             </asset>"""
 
     def create_glider_from_vertices(
         self,
-        geom_name: str = GLIDER_GEOM_NAME,
         scale: float = 1.0,
     ) -> tuple[str, str]:
         body = f"""
     <body name="body" pos="0 0 1" euler="{' '.join(map(str, self.orientation))}">
         <freejoint/>
         <!-- Main Wing -->
-        {geom_xml(
-            geom_name=geom_name,
-            mesh_name=geom_name + '-mesh'
-        )}
+        {GEOM_XML}
         <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
         <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
     </body>
@@ -162,7 +142,28 @@ class Vehicle:
         asset = self.asset_from_vertices(
             vertices=self.vertices,
             faces=self.faces,
-            mesh_name=(geom_name + "-mesh"),
+            scale=scale,
+        )
+        return body, asset
+    
+    def create_xml(
+        self,
+        scale: float = 1.0,
+    ) -> tuple[str, str]:
+        body = f"""
+    <body name="body" pos="0 0 1" euler="{' '.join(map(str, self.orientation))}">
+        <freejoint/>
+        <!-- Main Wing -->
+        {GEOM_XML}
+        <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
+        <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
+    </body>
+    """
+
+        asset = self.asset_from_vertices(
+            vertices=self.vertices,
+            faces=self.faces,
+            mesh_name=("vehicle-wing-mesh"),
             scale=scale,
         )
         return body, asset
@@ -181,64 +182,6 @@ class Vehicle:
             return True
 
 
-def geom_xml(
-    geom_name: str,
-    mesh_name: str,
-    density: float = WING_DENSITY,
-    rgba: str = WING_RGBA,
-) -> str:
-    geom = f"""<geom name="{geom_name}"  density="{density}" rgba="{rgba}" type="mesh" mesh="{mesh_name}"/>"""
-    return geom
-
-
-def asset_from_stl(
-    filename: str,
-    mesh_name: str = f"{GLIDER_GEOM_NAME}-mesh",
-    scale: float = 1.0,
-):
-    with open(filename, "rb") as f:
-        mesh = trimesh.load(
-            f,
-            file_type="stl",
-        )
-    vertices = mesh.vertices
-    if scale != 1.0:
-        vertices = [point * scale for point in vertices]
-
-    asset = f"""
-    <asset>
-        <mesh name="{mesh_name}" vertex="{to_vertex_list(vertices)}"/>
-    </asset>"""
-
-    return asset
-
-
-def create_glider_xml(
-    filename: str = DEFAULT_STL_FILEPATH,
-    geom_name: str = GLIDER_GEOM_NAME,
-    scale: float = 1.0,
-) -> tuple[str, str]:
-    body = f"""
-<body name="body" pos="0 0 1" euler="0 0 0">
-    <freejoint/>
-    <!-- Main Wing -->
-    {geom_xml(
-        geom_name=geom_name,
-        mesh_name=geom_name + '-mesh'
-    )}
-    <!-- Pilot -->
-    {pilot_xml()}
-    <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
-    <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
-</body>
-"""
-
-    asset = asset_from_stl(
-        filename=filename,
-        mesh_name=(geom_name + "-mesh"),
-        scale=scale,
-    )
-    return body, asset
 
 
 def to_vertex_list(
