@@ -68,6 +68,14 @@ def test_initialize():
         assert point not in vehicle_2.vertices
 
 
+def test_specify_mass():
+    vehicle = Vehicle(num_vertices=8, mass_kg=1.0)
+    assert vehicle.mass_kg == 1.0
+
+    glider_xml, glider_asset = vehicle.create_glider_from_vertices()
+    assert glider_xml.index('mass="1.0"') > 0
+
+
 def test_faces(cube_vertices, cube_faces):
     vehicle = Vehicle(num_vertices=8)
     assert vehicle.faces is not None
@@ -121,14 +129,3 @@ def test_clone():
 
     assert vehicle1.vertices == vehicle2.vertices
     assert id(vehicle1) != id(vehicle2)
-
-
-def test_cross_over():
-    vehicle1 = Vehicle(num_vertices=8)
-    vehicle2 = Vehicle(num_vertices=8)
-
-    new_vertices = vehicle1.cross_over(vehicle2)
-
-    assert new_vertices != vehicle1.vertices
-    assert new_vertices != vehicle2.vertices
-    assert len(new_vertices) == len(vehicle1.vertices)

@@ -14,11 +14,11 @@ PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
 PILOT_MASS_KG = 68
 
+def create_pilot_geom(pos: list[float] = [0, 0, 0]):
+    return f"""<geom name="pilot" type="box" size="{' '.join(map(str, PILOT_DIMENSIONS_M))}" pos="{' '.join(map(str,pos))}" >"""
+
 WING_RGBA = "0.8 0.2 0.2 0.5"
 WING_DENSITY = 1.67  # Roughly the same as a paraglider
-
-GEOM_XML = f"""<geom name="{'vehicle-wing'}"  density="{WING_DENSITY}" rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>"""
-
 
 class Vehicle:
     """
@@ -41,11 +41,13 @@ class Vehicle:
         wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
         max_dim_m: float = 4.5,
+        mass_kg: float = 0.0,
         orientation: list[int] = [0, 0, 0],
     ):
         super(Vehicle, self).__init__()
 
         self.max_dim_m = max_dim_m
+        self.mass_kg = mass_kg if mass_kg else None
         self.orientation = orientation
         self.wing_density = wing_density
         self.faces = faces if faces else []
@@ -88,10 +90,6 @@ class Vehicle:
     def clone(self) -> Any:
         return Vehicle(vertices=self.vertices)
 
-    def cross_over(self, other_vehicle: Any) -> Any:
-        split_point = np.random.randint(1, len(self.vertices) - 1)
-        return self.vertices[:split_point] + other_vehicle.vertices[split_point:]
-
     def load_stl(
         self,
         filename: str,
@@ -129,11 +127,14 @@ class Vehicle:
         self,
         scale: float = 1.0,
     ) -> tuple[str, str]:
+        density_tag = f"density=\"{WING_DENSITY}\""
+        mass_tag = f"mass=\"{self.mass_kg}\""
+
         body = f"""
     <body name="body" pos="0 0 1" euler="{' '.join(map(str, self.orientation))}">
         <freejoint/>
         <!-- Main Wing -->
-        {GEOM_XML}
+        <geom name="{'vehicle-wing'}" {density_tag if not self.mass_kg else mass_tag} rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>
         <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
         <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
     </body>
@@ -154,7 +155,7 @@ class Vehicle:
     <body name="body" pos="0 0 1" euler="{' '.join(map(str, self.orientation))}">
         <freejoint/>
         <!-- Main Wing -->
-        {GEOM_XML}
+        <geom name="{'vehicle-wing'}" {'density='+f"{WING_DENSITY}" if not self.mass_kg else ''}{'mass='+f"{self.mass_kg}" if self.mass_kg else ''} rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>
         <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
         <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
     </body>
