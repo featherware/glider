@@ -8,7 +8,7 @@
     <body name="body" pos="0 0 1" euler="90 180 -20">
         <freejoint/>
         <!-- Main Wing -->
-        <geom name="vehicle-wing"  density="1.67" rgba="0.8 0.2 0.2 0.5" type="mesh" mesh="vehicle-wing-mesh"/>
+        <geom name="vehicle-wing" mass="8.0" rgba="0.8 0.2 0.2 0.5" type="mesh" mesh="vehicle-wing-mesh"/>
         <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
         <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
     </body>

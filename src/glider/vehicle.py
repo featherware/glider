@@ -183,8 +183,6 @@ class Vehicle:
             return True
 
 
-
-
 def to_vertex_list(
     points: list,
 ) -> str:
