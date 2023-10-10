@@ -13,6 +13,7 @@ def drop_test_glider(
     <option density="{AIR_DENSITY}" viscosity="{AIR_VISCOSITY}" wind="{wind}"/>
     <worldbody>
         <light name="top" pos="0 0 5"/>
+        <camera name="fixed" pos="0 -100 100" euler="40 0 0"/>
         <!-- Body -->
         {glider_xml}
         <!-- Landing Platform -->

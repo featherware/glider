@@ -135,7 +135,6 @@ class Vehicle:
         <freejoint/>
         <!-- Main Wing -->
         <geom name="{'vehicle-wing'}" {density_tag if not self.mass_kg else mass_tag} rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>
-        <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
         <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
     </body>
     """
@@ -156,7 +155,6 @@ class Vehicle:
         <freejoint/>
         <!-- Main Wing -->
         <geom name="{'vehicle-wing'}" {'density='+f"{WING_DENSITY}" if not self.mass_kg else ''}{'mass='+f"{self.mass_kg}" if self.mass_kg else ''} rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>
-        <camera name="fixed" pos="-100 -100 -10" xyaxes="1 0 0 0 1 2"/>
         <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
     </body>
     """

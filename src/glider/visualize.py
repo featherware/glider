@@ -51,14 +51,14 @@ def view_vehicle(glider_xml, glider_asset):
     return render_initial_pixels(model, data)
 
 
-def render_to_collision(model, data, framerate=60, show=True) -> list[np.ndarray]:
+def render_to_collision(model, data, framerate=60, camera_name="fixed", show=True) -> list[np.ndarray]:
     renderer = mujoco.Renderer(model)
     frames: list[np.ndarray] = []
     mujoco.mj_resetData(model, data)  # Reset state and time.
     while len(data.contact) < 1:  # Render until landing
         mujoco.mj_step(model, data)
         if len(frames) < data.time * framerate:
-            renderer.update_scene(data, "track")
+            renderer.update_scene(data, camera_name)
             pixels = renderer.render()
             frames.append(pixels)
     if show:
