@@ -5,20 +5,18 @@ import numpy as np
 import trimesh
 
 import glider.visualize as visualize
-from .constants import (
-    MUTATION_RATIO,
-    MUTATION_CHANCE,
-    WING_RGBA,
-    WING_DENSITY,
-    DEFAULT_MAX_WING_DIMENSION_M
-)
+
+from .constants import (DEFAULT_MAX_WING_DIMENSION_M, MUTATION_CHANCE,
+                        MUTATION_RATIO, WING_DENSITY, WING_RGBA)
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
 PILOT_MASS_KG = 68
 
+
 def create_pilot_geom(pos: list[float] = [0, 0, 0]):
-    return f"""<geom name="pilot" type="box" size="{' '.join(map(str, PILOT_DIMENSIONS_M))}" pos="{' '.join(map(str,pos))}" >"""
+    return f"""<geom name="pilot" type="box" size="{' '.join(map(str, PILOT_DIMENSIONS_M))}" pos="{' '.join(map(str,pos))}" />"""
+
 
 class Vehicle:
     """
@@ -38,6 +36,7 @@ class Vehicle:
         self,
         vertices: list | None = None,
         faces: list | None = None,
+        pilot: bool = True,
         wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
         max_dim_m: float = DEFAULT_MAX_WING_DIMENSION_M,
@@ -51,6 +50,7 @@ class Vehicle:
         self.orientation = orientation
         self.wing_density = wing_density
         self.faces = faces if faces else []
+        self.pilot = pilot
 
         if vertices is not None:
             self.vertices = vertices
@@ -76,7 +76,9 @@ class Vehicle:
                 new_vertex: list[float] = list()  # type: ignore
                 for dim in vertex:
                     if np.random.random() < MUTATION_CHANCE:
-                        dim += self.max_dim_m * MUTATION_RATIO * np.random.choice((-1, 1))
+                        dim += (
+                            self.max_dim_m * MUTATION_RATIO * np.random.choice((-1, 1))
+                        )
                     new_vertex.append(dim)
                 new_vertices.append(new_vertex)
 
@@ -127,15 +129,18 @@ class Vehicle:
         self,
         scale: float = 1.0,
     ) -> tuple[str, str]:
-        density_tag = f"density=\"{WING_DENSITY}\""
-        mass_tag = f"mass=\"{self.mass_kg}\""
+        density_tag = f'density="{WING_DENSITY}"'
+        mass_tag = f'mass="{self.mass_kg}"'
+        pos_tag = f'pos="{" ".join([str(-self.max_dim_m // 2) for _ in range(3)])}"'
+
 
         body = f"""
-    <body name="body" pos="0 0 1" euler="{' '.join(map(str, self.orientation))}">
+    <body name="body" pos="0 0 0" euler="{' '.join(map(str, self.orientation))}">
         <freejoint/>
         <!-- Main Wing -->
-        <geom name="{'vehicle-wing'}" {density_tag if not self.mass_kg else mass_tag} rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>
+        <geom name="{'vehicle-wing'}" {density_tag if not self.mass_kg else mass_tag} {pos_tag} rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>
         <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
+        {create_pilot_geom() if self.pilot else ''}
     </body>
     """
 
@@ -145,7 +150,7 @@ class Vehicle:
             scale=scale,
         )
         return body, asset
-    
+
     def create_xml(
         self,
         scale: float = 1.0,

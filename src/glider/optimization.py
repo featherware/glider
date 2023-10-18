@@ -1,25 +1,21 @@
 import mujoco
 import numpy as np
-import pandas as pd
 
 from .constants import DEFAULT_MAX_WING_DIMENSION_M
 from .simulation import drop_test_glider
 from .vehicle import Vehicle
 
-
 NUM_GENES = 12
+
 
 def create_point(max_dim_m: float) -> list[float]:
     return list(np.random.random() * max_dim_m for _ in range(3))
 
 
 def fitness_func(test_vehicle: Vehicle) -> float:
-
     glider_xml, glider_asset = test_vehicle.create_glider_from_vertices()
     world_xml = drop_test_glider(
-        glider_xml=glider_xml,
-        glider_asset=glider_asset,
-        height=50.0
+        glider_xml=glider_xml, glider_asset=glider_asset, height=50.0
     )
 
     model = mujoco.MjModel.from_xml_string(world_xml)
@@ -29,7 +25,7 @@ def fitness_func(test_vehicle: Vehicle) -> float:
     while len(data.contact) < 1:  # Render until landing
         mujoco.mj_step(model, data)
 
-    return abs(data.geom('vehicle-wing').xpos[0])
+    return abs(data.geom("vehicle-wing").xpos[0])
 
 
 def iterate_population(
@@ -37,6 +33,7 @@ def iterate_population(
     survival_weight=0.3,
     cloning_weight=0.4,
     max_dim_m=DEFAULT_MAX_WING_DIMENSION_M,
+    pilot: bool = True,
 ):
     # on_start()
 
@@ -77,17 +74,19 @@ def iterate_population(
             Vehicle(
                 vertices=(survivors[target_index].mutate()),
                 max_dim_m=survivors[target_index].max_dim_m,
+                pilot=pilot,
             )
         )
 
-    population = [
+    random_population = [
         Vehicle(
             num_vertices=NUM_GENES,
             max_dim_m=max_dim_m,
+            pilot=pilot,
         )
         for _ in range(population_size - len(clones) - len(survivors))
     ]
 
-    population = survivors + clones + population
+    new_population = survivors + clones + random_population
 
-    return ranking, population
+    return ranking, new_population
