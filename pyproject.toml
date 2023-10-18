@@ -8,8 +8,8 @@ pythonpath = [
 ]
 
 [tool.poetry]
-name = "my_package"
-version = "0.1.0"
+name = "glider"
+version = "0.2.0"
 description = "An evolutionary glider simulator"
 authors = ["Luan van Pletsen <luanvanpletsen@gmail.com>"]
 

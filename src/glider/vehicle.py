@@ -7,7 +7,10 @@ import trimesh
 import glider.visualize as visualize
 from .constants import (
     MUTATION_RATIO,
-    MUTATION_CHANCE
+    MUTATION_CHANCE,
+    WING_RGBA,
+    WING_DENSITY,
+    DEFAULT_MAX_WING_DIMENSION_M
 )
 
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
@@ -16,9 +19,6 @@ PILOT_MASS_KG = 68
 
 def create_pilot_geom(pos: list[float] = [0, 0, 0]):
     return f"""<geom name="pilot" type="box" size="{' '.join(map(str, PILOT_DIMENSIONS_M))}" pos="{' '.join(map(str,pos))}" >"""
-
-WING_RGBA = "0.8 0.2 0.2 0.5"
-WING_DENSITY = 1.67  # Roughly the same as a paraglider
 
 class Vehicle:
     """
@@ -40,7 +40,7 @@ class Vehicle:
         faces: list | None = None,
         wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
-        max_dim_m: float = 4.5,
+        max_dim_m: float = DEFAULT_MAX_WING_DIMENSION_M,
         mass_kg: float = 0.0,
         orientation: list[int] = [0, 0, 0],
     ):

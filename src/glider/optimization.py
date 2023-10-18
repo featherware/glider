@@ -2,22 +2,18 @@ import mujoco
 import numpy as np
 import pandas as pd
 
+from .constants import DEFAULT_MAX_WING_DIMENSION_M
 from .simulation import drop_test_glider
 from .vehicle import Vehicle
 
-NUM_GENES = 12
-GLIDER_MAX_DIM = 5.0
 
+NUM_GENES = 12
 
 def create_point(max_dim_m: float) -> list[float]:
     return list(np.random.random() * max_dim_m for _ in range(3))
 
 
-def fitness_func(genes: list[list[float]] | Vehicle) -> float:
-    if type(genes) == list:
-        test_vehicle = Vehicle(vertices=genes)
-    else:
-        test_vehicle = genes
+def fitness_func(test_vehicle: Vehicle) -> float:
 
     glider_xml, glider_asset = test_vehicle.create_glider_from_vertices()
     world_xml = drop_test_glider(
@@ -40,6 +36,7 @@ def iterate_population(
     population: list[Vehicle],
     survival_weight=0.3,
     cloning_weight=0.4,
+    max_dim_m=DEFAULT_MAX_WING_DIMENSION_M,
 ):
     # on_start()
 
@@ -57,8 +54,8 @@ def iterate_population(
 
     results: list[float] = []
 
-    for genes in population:
-        results.append(fitness_func(genes))
+    for v in population:
+        results.append(fitness_func(v))
 
     assert len(population) == len(results)
 
@@ -78,43 +75,19 @@ def iterate_population(
 
         clones.append(
             Vehicle(
-                vertices=(survivors[target_index].mutate()))
+                vertices=(survivors[target_index].mutate()),
+                max_dim_m=survivors[target_index].max_dim_m,
+            )
         )
 
     population = [
         Vehicle(
             num_vertices=NUM_GENES,
-            max_dim_m=GLIDER_MAX_DIM
+            max_dim_m=max_dim_m,
         )
         for _ in range(population_size - len(clones) - len(survivors))
     ]
 
     population = survivors + clones + population
 
-    return population
-
-    total_weight = mutation_weight + cloning_weight + crossover_weight
-    mutation_weight /= total_weight
-    cloning_weight /= total_weight
-    crossover_weight /= total_weight
-
-    # How many to retain from the previous run
-    required = int((population_size * hereditary_weight) - len(survivors))
-
-    new_population = []
-
-    for i in range(int(required * mutation_weight)):
-        new_population.append(vehicle.Vehicle.mutate(survivors[i // 2]))
-
-    for i in range(int(required * cloning_weight)):
-        new_population.append(vehicle.Vehicle(vertices=survivors[i // 2].vertices))
-
-    for i in range(int(required * crossover_weight)):
-        new_population.append(
-            vehicle.Vehicle(vertices=survivors[i // 2].cross_over(survivors[i // 3]))
-        )
-
-    for i in range(population_size - len(new_population)):
-        new_population.append(vehicle.Vehicle(num_vertices=30, max_dim_m=5.0))
-
-    return new_population
+    return ranking, population

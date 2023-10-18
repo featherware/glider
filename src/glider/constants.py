@@ -9,8 +9,10 @@ PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
 PILOT_DENSITY_KG = 68 / reduce(lambda x, y: x * y, PILOT_DIMENSIONS_M)
 
-# Delta wing defaults
+# Wing defaults
+WING_DENSITY = 1.67
 WING_RGBA = "0.8 0.2 0.2 0.5"
+DEFAULT_MAX_WING_DIMENSION_M = 4.5
 
 # Simulation
 FRAMERATE = 60
