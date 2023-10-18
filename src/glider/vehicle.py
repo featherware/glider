@@ -40,13 +40,13 @@ class Vehicle:
         wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
         max_dim_m: float = DEFAULT_MAX_WING_DIMENSION_M,
-        mass_kg: float = 0.0,
+        mass_kg: float | None = 0.0,
         orientation: list[int] = [0, 0, 0],
     ):
         super(Vehicle, self).__init__()
 
         self.max_dim_m = max_dim_m
-        self.mass_kg = mass_kg if mass_kg else None
+        self.mass_kg = mass_kg
         self.orientation = orientation
         self.wing_density = wing_density
         self.faces = faces if faces else []
@@ -132,7 +132,6 @@ class Vehicle:
         density_tag = f'density="{WING_DENSITY}"'
         mass_tag = f'mass="{self.mass_kg}"'
         pos_tag = f'pos="{" ".join([str(-self.max_dim_m // 2) for _ in range(3)])}"'
-
 
         body = f"""
     <body name="body" pos="0 0 0" euler="{' '.join(map(str, self.orientation))}">

@@ -34,6 +34,7 @@ def iterate_population(
     cloning_weight=0.4,
     max_dim_m=DEFAULT_MAX_WING_DIMENSION_M,
     pilot: bool = True,
+    mass_kg: float | None = None,
 ):
     # on_start()
 
@@ -75,6 +76,7 @@ def iterate_population(
                 vertices=(survivors[target_index].mutate()),
                 max_dim_m=survivors[target_index].max_dim_m,
                 pilot=pilot,
+                mass_kg=mass_kg,
             )
         )
 
@@ -83,6 +85,7 @@ def iterate_population(
             num_vertices=NUM_GENES,
             max_dim_m=max_dim_m,
             pilot=pilot,
+            mass_kg=mass_kg,
         )
         for _ in range(population_size - len(clones) - len(survivors))
     ]
