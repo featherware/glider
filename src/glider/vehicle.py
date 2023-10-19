@@ -25,7 +25,7 @@ class VehicleConfig:
     faces: list[list[int]] | None = None
     num_vertices: int = 30
     max_dim_m: float = DEFAULT_MAX_WING_DIMENSION_M
-    pilot: bool = True
+    pilot: bool = False
     mass_kg: float | None = None
     wing_density: float = WING_DENSITY
     orientation: list[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
@@ -46,7 +46,7 @@ class Vehicle:
         max_dim_m (float):      The maximum wing dimension of the vehicle.
                                 Default: contants.DEFAULT_MAX_WING_DIMENSION_M.
         pilot (bool):           Adds a human-sized pilot to the vehicle.
-                                Defaults to True.
+                                Defaults to False.
         mass_kg (float):        Explicitely sets the mass of the wing.
                                 If not defined, the wing density is set
                                 to constants.WING_DENSITY.
@@ -63,7 +63,7 @@ class Vehicle:
         faces: list | None = None,
         num_vertices: int = 30,
         max_dim_m: float = DEFAULT_MAX_WING_DIMENSION_M,
-        pilot: bool = True,
+        pilot: bool = False,
         wing_density: float = WING_DENSITY,
         mass_kg: float | None = None,
         orientation: list[float] = [0.0, 0.0, 0.0],
