@@ -82,6 +82,17 @@ class Vehicle:
         else:
             self.initialize_vertices(num_vertices, max_dim_m)
 
+    def config(self) -> VehicleConfig:
+        return VehicleConfig(
+            vertices=self.vertices,
+            faces=self.faces,
+            max_dim_m=self.max_dim_m,
+            pilot=self.pilot,
+            mass_kg=self.mass_kg,
+            wing_density=self.wing_density,
+            orientation=self.orientation,
+        )
+
     def initialize_vertices(self, num_points: int, max_dim_m: float) -> None:
         self.vertices = []
         for _ in range(num_points):
