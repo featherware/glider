@@ -144,32 +144,24 @@ class Vehicle:
 
         return vertices
 
-    def asset_from_vertices(
-        self,
-        vertices: list,
-        faces: list = [],
-        scale: float = 1.0,
-    ):
-        if faces:
+    def get_wing_asset(self):
+        if self.faces:
             return f"""
             <asset>
-                <mesh name="{'vehicle-wing-mesh'}" vertex="{to_vertex_list(vertices)}" face="{to_vertex_list(faces)}"/>
+                <mesh name="{'vehicle-wing-mesh'}" vertex="{to_vertex_list(self.vertices)}" face="{to_vertex_list(self.faces)}"/>
             </asset>"""
         else:
             return f"""
             <asset>
-                <mesh name="{'vehicle-wing-mesh'}" vertex="{to_vertex_list(vertices)}"/>
+                <mesh name="{'vehicle-wing-mesh'}" vertex="{to_vertex_list(self.vertices)}"/>
             </asset>"""
 
-    def create_glider_from_vertices(
-        self,
-        scale: float = 1.0,
-    ) -> tuple[str, str]:
+    def xml(self) -> tuple[str, str]:
         density_tag = f'density="{WING_DENSITY}"'
         mass_tag = f'mass="{self.mass_kg}"'
         pos_tag = f'pos="{" ".join([str(-self.max_dim_m // 2) for _ in range(3)])}"'
 
-        body = f"""
+        body_xml = f"""
     <body name="body" pos="0 0 0" euler="{' '.join(map(str, self.orientation))}">
         <freejoint/>
         <!-- Main Wing -->
@@ -179,36 +171,11 @@ class Vehicle:
     </body>
     """
 
-        asset = self.asset_from_vertices(
-            vertices=self.vertices,
-            faces=self.faces,
-            scale=scale,
-        )
-        return body, asset
-
-    def create_xml(
-        self,
-        scale: float = 1.0,
-    ) -> tuple[str, str]:
-        body = f"""
-    <body name="body" pos="0 0 1" euler="{' '.join(map(str, self.orientation))}">
-        <freejoint/>
-        <!-- Main Wing -->
-        <geom name="{'vehicle-wing'}" {'density='+f"{WING_DENSITY}" if not self.mass_kg else ''}{'mass='+f"{self.mass_kg}" if self.mass_kg else ''} rgba="{WING_RGBA}" type="mesh" mesh="{'vehicle-wing-mesh'}"/>
-        <camera name="track" pos="0 0 0" xyaxes="1 2 0 0 1 2" mode="track"/>
-    </body>
-    """
-
-        asset = self.asset_from_vertices(
-            vertices=self.vertices,
-            faces=self.faces,
-            mesh_name=("vehicle-wing-mesh"),
-            scale=scale,
-        )
-        return body, asset
+        asset_xml = self.get_wing_asset()
+        return body_xml, asset_xml
 
     def show(self):
-        media.show_image(visualize.view_vehicle(*self.create_glider_from_vertices()))
+        media.show_image(visualize.view_vehicle(*self.xml()))
 
     def exceeds_max_dim(self) -> bool:
         try:
