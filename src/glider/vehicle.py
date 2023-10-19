@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Any
 
 import mediapy as media
@@ -18,30 +19,54 @@ def create_pilot_geom(pos: list[float] = [0, 0, 0]):
     return f"""<geom name="pilot" type="box" size="{' '.join(map(str, PILOT_DIMENSIONS_M))}" pos="{' '.join(map(str,pos))}" />"""
 
 
+@dataclass
+class VehicleConfig:
+    vertices: list[list[float]] | None = None
+    faces: list[list[int]] | None = None
+    num_vertices: int = 30
+    max_dim_m: float = DEFAULT_MAX_WING_DIMENSION_M
+    pilot: bool = True
+    mass_kg: float | None = None
+    wing_density: float = WING_DENSITY
+    orientation: list[float] = [0.0, 0.0, 0.0]
+
+
 class Vehicle:
     """
-    A vehicle comprises a set of vertices for the main wing,
-    and a human-sized pilot.
-
-    Orientation is relative to the file default orientation.
-
-    Either vertices or filename must be provided.
+    Class responsible for generating the XML for a vehicle.
 
     Args:
-        vertices (list): A list of vertices for the main wing
-        filename (str): The path to an STL file
+        vertices (list):        A list of vertices for the main wing.
+        faces (list):           Lists of indices for the vertices,
+                                which define triangluar faces for the mesh.
+                                Clockwise order is assumed.
+        num_vertices (int):     A number of vertices to randomly generate.
+                                This is ignored if 'vertices' is defined.
+                                Defaults to 30.
+        max_dim_m (float):      The maximum wing dimension of the vehicle.
+                                Default: contants.DEFAULT_MAX_WING_DIMENSION_M.
+        pilot (bool):           Adds a human-sized pilot to the vehicle.
+                                Defaults to True.
+        mass_kg (float):        Explicitely sets the mass of the wing.
+                                If not defined, the wing density is set
+                                to constants.WING_DENSITY.
+                                Defaults to None.
+        wing_density (float):   The material density for the wing.
+                                Ignored if 'mass_kg' is defined explicitely.
+                                Defaults to constants.WING_DENSITY.
+        orientation (list):     Specify a custom orientation with euler angles.
     """
 
     def __init__(
         self,
         vertices: list | None = None,
         faces: list | None = None,
-        pilot: bool = True,
-        wing_density: float = WING_DENSITY,
         num_vertices: int = 30,
         max_dim_m: float = DEFAULT_MAX_WING_DIMENSION_M,
-        mass_kg: float | None = 0.0,
-        orientation: list[int] = [0, 0, 0],
+        pilot: bool = True,
+        wing_density: float = WING_DENSITY,
+        mass_kg: float | None = None,
+        orientation: list[float] = [0.0, 0.0, 0.0],
     ):
         super(Vehicle, self).__init__()
 
