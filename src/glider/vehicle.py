@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 import mediapy as media
@@ -28,7 +28,7 @@ class VehicleConfig:
     pilot: bool = True
     mass_kg: float | None = None
     wing_density: float = WING_DENSITY
-    orientation: list[float] = [0.0, 0.0, 0.0]
+    orientation: list[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
 
 
 class Vehicle:
