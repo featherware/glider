@@ -1,8 +1,14 @@
+from io import BytesIO
+
+import matplotlib.pyplot as plt
 import mediapy as media
 import mujoco
 import numpy as np
+import pandas as pd
+from PIL import Image
 
 from .constants import AIR_DENSITY, AIR_VISCOSITY
+from .vehicle import Vehicle
 
 
 def wrap_glider(
@@ -42,13 +48,36 @@ def render_initial_pixels(
     return pixels
 
 
-def view_vehicle(glider_xml, glider_asset):
-    world_xml = wrap_glider(glider_xml, glider_asset)
+def view_vehicle(vehicle: Vehicle):
+    world_xml = wrap_glider(*vehicle.xml())
 
     model = mujoco.MjModel.from_xml_string(world_xml)
     data = mujoco.MjData(model)
 
     return render_initial_pixels(model, data)
+
+
+def graph_population(ranking: list[tuple[Vehicle, float]]) -> np.ndarray:
+    """
+    Graph the fitness of a population, return the figure as a numpy array.
+    For creating animated gifs of the population evolution over time.
+    """
+
+    df = pd.DataFrame(ranking, columns=["Vehicle", "Fitness"])
+    df.plot.hist(bins=20)
+    plt.xticks(range(0, 80, 10))
+    plt.xlabel("Fitness")
+    plt.yticks(range(0, 50, 10))
+    plt.ylabel("Count")
+    plt.legend().remove()
+
+    buf = BytesIO()
+    plt.savefig(buf, format="png")
+    buf.seek(0)
+    im = Image.open(buf, formats=["png"], )
+    plt.close()
+
+    return np.asarray(im)[:, :, :3]
 
 
 def render_to_collision(model, data, framerate=60, camera_name="fixed", show=True) -> list[np.ndarray]:

@@ -1,12 +1,13 @@
 from .constants import AIR_DENSITY, AIR_VISCOSITY
+from .vehicle import Vehicle
 
 
 def drop_test_glider(
-    glider_xml: str,
-    glider_asset: str,
+    vehicle: Vehicle,
     height=80,
     wind: str = "0 0 0",
 ) -> str:
+    glider_xml, glider_asset = vehicle.xml()
 
     world_xml = f"""
 <mujoco>
