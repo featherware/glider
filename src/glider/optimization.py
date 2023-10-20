@@ -5,7 +5,8 @@ from .constants import DEFAULT_MAX_WING_DIMENSION_M
 from .simulation import drop_test_glider
 from .vehicle import Vehicle
 
-NUM_GENES = 12
+NUM_GENES = 10
+DROP_TEST_HEIGHT = 50.0
 
 
 def create_point(max_dim_m: float) -> list[float]:
@@ -13,12 +14,9 @@ def create_point(max_dim_m: float) -> list[float]:
 
 
 def fitness_func(test_vehicle: Vehicle) -> float:
-    glider_xml, glider_asset = test_vehicle.create_glider_from_vertices()
-    world_xml = drop_test_glider(
-        glider_xml=glider_xml, glider_asset=glider_asset, height=50.0
-    )
+    test_xml = drop_test_glider(test_vehicle, height=DROP_TEST_HEIGHT)
 
-    model = mujoco.MjModel.from_xml_string(world_xml)
+    model = mujoco.MjModel.from_xml_string(test_xml)
     data = mujoco.MjData(model)
     mujoco.mj_resetData(model, data)  # Reset state and time.
 
@@ -29,11 +27,11 @@ def fitness_func(test_vehicle: Vehicle) -> float:
 
 
 def iterate_population(
-    population: list[Vehicle],
+    input_population: list[Vehicle],
     survival_weight=0.3,
     cloning_weight=0.4,
     max_dim_m=DEFAULT_MAX_WING_DIMENSION_M,
-    pilot: bool = True,
+    pilot: bool = False,
     mass_kg: float | None = None,
 ):
     # on_start()
@@ -46,19 +44,19 @@ def iterate_population(
 
     # on_stop()
 
-    population_size = len(population)
+    population_size = len(input_population)
 
     assert cloning_weight + survival_weight <= 1.0
 
     results: list[float] = []
 
-    for v in population:
+    for v in input_population:
         results.append(fitness_func(v))
 
-    assert len(population) == len(results)
+    assert len(input_population) == len(results)
 
     # Ranking is a combination of glider and fitness
-    ranking = list(zip(population, results))
+    ranking = list(zip(input_population, results))
     ranking.sort(key=lambda x: x[1], reverse=True)
 
     # Retain survivors
