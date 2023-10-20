@@ -34,15 +34,18 @@ def iterate_population(
     pilot: bool = False,
     mass_kg: float | None = None,
 ):
-    # on_start()
+    """
+    Take an input population, and return a new population based on the
+    survival and cloning weights. Random gliders are generated to fill
+    the remaining population.
 
-    # on_fitness()
-    # on_parents()
-    # on_crossover()
-    # on_mutation()
-    # on_generation()
-
-    # on_stop()
+    Args:
+    survival_weight:    The proportion of the population that survives
+    cloning_weight:     The proportion of the population that is cloned
+    max_dim_m:          The maximum dimension of a wing
+    pilot:              Whether or not to add a pilot
+    mass_kg:            The mass of the wing
+    """
 
     population_size = len(input_population)
 
