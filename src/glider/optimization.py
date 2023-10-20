@@ -48,27 +48,15 @@ def iterate_population(
     """
 
     population_size = len(input_population)
-
     assert cloning_weight + survival_weight <= 1.0
 
-    results: list[float] = []
-
-    for v in input_population:
-        results.append(fitness_func(v))
-
-    assert len(input_population) == len(results)
-
-    # Ranking is a combination of glider and fitness
-    ranking = list(zip(input_population, results))
-    ranking.sort(key=lambda x: x[1], reverse=True)
+    ranking = evaluate_population(input_population)
 
     # Retain survivors
     survivor_results = ranking[: int(population_size * survival_weight)]
-
     survivors: list[Vehicle] = [result[0] for result in survivor_results]
 
     clones: list[Vehicle] = []
-
     for i in range(int(population_size * cloning_weight)):
         target_index = i % len(survivors)
 
@@ -94,3 +82,21 @@ def iterate_population(
     new_population = survivors + clones + random_population
 
     return ranking, new_population
+
+
+def evaluate_population(
+        input_population: list[Vehicle],
+        fitness_func=fitness_func,
+        ) -> list[tuple[Vehicle, float]]:
+
+    results: list[float] = []
+    for v in input_population:
+        results.append(fitness_func(v))
+
+    assert len(input_population) == len(results)
+
+    # Ranking is a combination of glider and fitness
+    ranking = list(zip(input_population, results))
+    ranking.sort(key=lambda x: x[1], reverse=True)
+
+    return ranking
