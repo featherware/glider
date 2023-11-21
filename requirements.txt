@@ -5,3 +5,4 @@ pandas
 trimesh
 jupyter
 pygad
+fastapi
