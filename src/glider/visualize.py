@@ -1,4 +1,5 @@
 from io import BytesIO
+from typing import Any
 
 import matplotlib.pyplot as plt
 import mediapy as media
@@ -8,13 +9,9 @@ import pandas as pd
 from PIL import Image
 
 from .constants import AIR_DENSITY, AIR_VISCOSITY
-from .vehicle import Vehicle
 
 
-def wrap_glider(
-    glider_xml: str, glider_asset: str, wind: str = "0 0 0"
-) -> str:
-
+def wrap_glider(glider_xml: str, glider_asset: str, wind: str = "0 0 0") -> str:
     world_xml = f"""
 <mujoco>
     <option density="{AIR_DENSITY}" viscosity="{AIR_VISCOSITY}" wind="{wind}"/>
@@ -48,7 +45,7 @@ def render_initial_pixels(
     return pixels
 
 
-def view_vehicle(vehicle: Vehicle):
+def view_vehicle(vehicle: Any):
     world_xml = wrap_glider(*vehicle.xml())
 
     model = mujoco.MjModel.from_xml_string(world_xml)
@@ -57,7 +54,7 @@ def view_vehicle(vehicle: Vehicle):
     return render_initial_pixels(model, data)
 
 
-def graph_population(ranking: list[tuple[Vehicle, float]]) -> np.ndarray:
+def graph_population(ranking: list[tuple[Any, float]]) -> np.ndarray:
     """
     Graph the fitness of a population, return the figure as a numpy array.
     For creating animated gifs of the population evolution over time.
@@ -74,13 +71,18 @@ def graph_population(ranking: list[tuple[Vehicle, float]]) -> np.ndarray:
     buf = BytesIO()
     plt.savefig(buf, format="png")
     buf.seek(0)
-    im = Image.open(buf, formats=["png"], )
+    im = Image.open(
+        buf,
+        formats=["png"],
+    )
     plt.close()
 
     return np.asarray(im)[:, :, :3]
 
 
-def render_to_collision(model, data, framerate=60, camera_name="fixed", show=True) -> list[np.ndarray]:
+def render_to_collision(
+    model, data, framerate=60, camera_name="fixed", show=True
+) -> list[np.ndarray]:
     renderer = mujoco.Renderer(model)
     frames: list[np.ndarray] = []
     mujoco.mj_resetData(model, data)  # Reset state and time.
@@ -96,7 +98,9 @@ def render_to_collision(model, data, framerate=60, camera_name="fixed", show=Tru
     return frames
 
 
-def render_xml_to_collision(world_xml: str, framerate=60, camera_name="fixed", show=True) -> list[np.ndarray] | None:
+def render_xml_to_collision(
+    world_xml: str, framerate=60, camera_name="fixed", show=True
+) -> list[np.ndarray] | None:
     model = mujoco.MjModel.from_xml_string(world_xml)
     data = mujoco.MjData(model)
     renderer = mujoco.Renderer(model)
