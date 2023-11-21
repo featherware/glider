@@ -6,3 +6,4 @@ trimesh
 jupyter
 pygad
 fastapi
+gunicorn
