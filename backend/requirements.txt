@@ -5,3 +5,6 @@ pandas
 trimesh
 jupyter
 pygad
+fastapi
+gunicorn
+uvicorn
