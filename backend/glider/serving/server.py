@@ -36,7 +36,7 @@ async def create_vehicle(
 
 @app.post("/vehicle/drop_test/")
 async def drop_test_vehicle(v: VehicleType):
-    test_vehicle = vehicle.Vehicle(**v.dict())
+    test_vehicle = vehicle.Vehicle(**v.model_dump())
     return simulation.drop_test_glider(test_vehicle)
 
 
@@ -51,5 +51,5 @@ async def view_vehicle(v: VehicleType):
 
 @app.post("/vehicle/fitness/")
 async def vehicle_fitness(v: VehicleType) -> float:
-    test_vehicle = vehicle.Vehicle(**v.dict())
+    test_vehicle = vehicle.Vehicle(**v.model_dump())
     return optimization.fitness_func(test_vehicle)
