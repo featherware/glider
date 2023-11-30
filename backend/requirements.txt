@@ -8,4 +8,4 @@ pygad
 fastapi
 gunicorn
 uvicorn
-sqlalchemy
+pymongo

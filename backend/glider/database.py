@@ -1,25 +1,17 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from os import getenv
+import pymongo
 
-username = "postgres"
-password = getenv("POSTGRES_PASSWORD")
-hostname = "localhost"
-database_name = "fastapi"
-SQLALCHEMY_DATABASE_URL = \
-    f"postgresql://{username}:{password}@{hostname}/{database_name}"
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
+current_data_version = 'v1'
 
 
 def get_db():
-    db = SessionLocal()
     try:
+        client = pymongo.MongoClient("mongodb://mongo:27017/")
+        db = client["glider"]
         yield db
     finally:
-        db.close()
+        client.close()
+
+
+def write(db, data, data_version=current_data_version):
+    db[f"data-{data_version}"].insert_one(data)
+
