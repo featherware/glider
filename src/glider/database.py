@@ -6,7 +6,7 @@ current_data_version = 'v1'
 def get_db():
     try:
         client = pymongo.MongoClient("mongodb://mongo:27017/")
-        db = client["glider"]
+        db = client["gliders"]
         yield db
     finally:
         client.close()
