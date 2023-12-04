@@ -1,8 +1,7 @@
 import mujoco
 import numpy as np
 
-from .constants import DEFAULT_MAX_WING_DIMENSION_M
-from .simulation import drop_test_glider
+from .constants import DEFAULT_MAX_WING_DIMENSION_M, AIR_DENSITY, AIR_VISCOSITY
 from .vehicle import Vehicle
 
 NUM_GENES = 10
@@ -11,6 +10,34 @@ DROP_TEST_HEIGHT = 50.0
 
 def create_point(max_dim_m: float) -> list[float]:
     return list(np.random.random() * max_dim_m for _ in range(3))
+
+
+def drop_test_glider(
+    vehicle: Vehicle,
+    height=80,
+    wind: str = "0 0 0",
+) -> str:
+    glider_xml, glider_asset = vehicle.xml()
+
+    world_xml = f"""
+<mujoco>
+    <option density="{AIR_DENSITY}" viscosity="{AIR_VISCOSITY}" wind="{wind}"/>
+    <worldbody>
+        <light name="top" pos="0 0 5"/>
+        <camera name="fixed" pos="0 -100 100" euler="40 0 0"/>
+        <!-- Body -->
+        {glider_xml}
+        <!-- Landing Platform -->
+        <body name="platform" pos="0 0 0">
+            <geom name="platform-geom" type="box" size="1500 1500 1" rgba="1 1 1 1" pos="0 0 {-height}"/>
+        </body>
+    </worldbody>
+
+    {glider_asset}
+</mujoco>
+
+"""
+    return world_xml
 
 
 def fitness_func(test_vehicle: Vehicle) -> float:

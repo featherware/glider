@@ -5,7 +5,7 @@ import mediapy as media
 import numpy as np
 import trimesh
 
-import glider.visualize as visualize
+import glider.visualization as visualization
 
 from .constants import (DEFAULT_MAX_WING_DIMENSION_M, MUTATION_CHANCE,
                         MUTATION_RATIO, WING_DENSITY, WING_RGBA)
@@ -175,7 +175,7 @@ class Vehicle:
         return body_xml, asset_xml
 
     def show(self):
-        media.show_image(visualize.view_vehicle(*self.xml()))
+        media.show_image(visualization.view_vehicle(*self.xml()))
 
     def exceeds_max_dim(self) -> bool:
         try:

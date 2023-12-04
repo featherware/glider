@@ -6,7 +6,7 @@ from io import BytesIO
 
 from .schema import VehicleType
 
-from glider import optimization, simulation, vehicle, visualize
+from glider import optimization, vehicle, visualization
 
 app = FastAPI()
 
@@ -26,25 +26,22 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.post("/vehicle/")
-async def create_vehicle(
-    vertices: list[list[int]] | None = None,
-    faces: list[list[int]] | None = None,
-):
-    return vehicle.Vehicle(vertices=vertices, faces=faces)
+@app.get("/vehicle/")
+async def create_vehicle():
+    return vehicle.Vehicle()
 
 
 @app.post("/vehicle/drop_test/")
 async def drop_test_vehicle(v: VehicleType):
     test_vehicle = vehicle.Vehicle(**v.model_dump())
-    return simulation.drop_test_glider(test_vehicle)
+    return optimization.drop_test_glider(test_vehicle)
 
 
 @app.post("/vehicle/view/")
 async def view_vehicle(v: VehicleType):
     test_vehicle = vehicle.Vehicle(**v.model_dump())
     bytes = BytesIO()
-    Image.fromarray(visualize.view_vehicle(test_vehicle)).save(bytes, format="PNG")
+    Image.fromarray(visualization.view_vehicle(test_vehicle)).save(bytes, format="PNG")
     b64_image = b64encode(bytes.getvalue())
     return {"data": b64_image.decode("utf-8")}
 

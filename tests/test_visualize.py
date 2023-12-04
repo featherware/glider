@@ -1,4 +1,4 @@
-import glider.visualize as visualize
+import glider.visualization as visualization
 from glider.constants import FRAME_HEIGHT, FRAME_WIDTH
 from glider.vehicle import Vehicle
 
@@ -7,7 +7,7 @@ def test_view_vehicle():
     v = Vehicle(num_vertices=10)
     vehicle_xml, vehicle_asset = v.create_glider_from_vertices()
 
-    pixels = visualize.view_vehicle(
+    pixels = visualization.view_vehicle(
         vehicle_xml,
         vehicle_asset,
     )

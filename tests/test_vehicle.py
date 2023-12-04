@@ -1,7 +1,6 @@
 import mujoco
 import pytest
 
-from glider import visualize
 from glider.vehicle import Vehicle
 
 
