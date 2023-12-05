@@ -8,21 +8,13 @@ import trimesh
 import glider.visualization as visualization
 
 from .constants import (DEFAULT_MAX_WING_DIMENSION_M, MUTATION_CHANCE,
-                        MUTATION_RATIO, WING_DENSITY, WING_RGBA)
-
-PILOT_RGBA = "0.2 0.2 0.8 0.5"
-PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
-PILOT_MASS_KG = 68
-
-
-def create_pilot_geom(pos: list[float] = [0, 0, 0]):
-    return f"""<geom name="pilot" type="box" size="{' '.join(map(str, PILOT_DIMENSIONS_M))}" pos="{' '.join(map(str,pos))}" />"""
+                        MUTATION_RATIO, WING_DENSITY, WING_RGBA,
+                        PILOT_RGBA, PILOT_DIMENSIONS_M, PILOT_MASS_KG,
+                        create_pilot_geom)
 
 
 @dataclass
 class VehicleConfig:
-    vertices: list[list[float]] | None = None
-    faces: list[list[int]] | None = None
     num_vertices: int = 30
     max_dim_m: float = DEFAULT_MAX_WING_DIMENSION_M
     pilot: bool = False
@@ -84,8 +76,6 @@ class Vehicle:
 
     def config(self) -> VehicleConfig:
         return VehicleConfig(
-            vertices=self.vertices,
-            faces=self.faces,
             max_dim_m=self.max_dim_m,
             pilot=self.pilot,
             mass_kg=self.mass_kg,

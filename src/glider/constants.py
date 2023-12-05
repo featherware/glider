@@ -7,6 +7,7 @@ WIND = "0 0 0"
 # Pilot defaults
 PILOT_RGBA = "0.2 0.2 0.8 0.5"
 PILOT_DIMENSIONS_M = [1.8, 0.3, 0.6]
+PILOT_MASS_KG = 68
 PILOT_DENSITY_KG = 68 / reduce(lambda x, y: x * y, PILOT_DIMENSIONS_M)
 
 # Wing defaults
@@ -30,3 +31,7 @@ CROSSOVER_WEIGHT = 1
 # Rendering constants
 FRAME_WIDTH = 320
 FRAME_HEIGHT = 240
+
+
+def create_pilot_geom(pos: list[float] = [0, 0, 0]):
+    return f"""<geom name="pilot" type="box" size="{' '.join(map(str, PILOT_DIMENSIONS_M))}" pos="{' '.join(map(str,pos))}" />"""
